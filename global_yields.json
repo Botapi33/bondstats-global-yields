@@ -2,8 +2,109 @@
   "meta": {
     "title": "BondStats Global Yields",
     "source": "FRED",
-    "lastUpdated": "",
+    "lastUpdated": "2026-03-22",
     "note": "Some country series update monthly depending on source frequency."
   },
-  "countries": {}
+  "countries": {
+    "united_states": {
+      "label": "United States",
+      "seriesId": "DGS10",
+      "frequency": "Daily",
+      "date": "2026-03-19",
+      "value": 4.25,
+      "previousDate": "2026-03-18",
+      "previousValue": 4.26,
+      "change": -0.009999999999999787
+    },
+    "germany": {
+      "label": "Germany",
+      "seriesId": "IRLTLT01DEM156N",
+      "frequency": "Monthly",
+      "date": "2026-01-01",
+      "value": 2.80666666666667,
+      "previousDate": "2025-12-01",
+      "previousValue": 2.81421052631579,
+      "change": -0.007543859649119966
+    },
+    "united_kingdom": {
+      "label": "United Kingdom",
+      "seriesId": "IRLTLT01GBM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 4.4324,
+      "previousDate": "2026-01-01",
+      "previousValue": 4.451,
+      "change": -0.018599999999999284
+    },
+    "japan": {
+      "label": "Japan",
+      "seriesId": "IRLTLT01JPM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 2.11,
+      "previousDate": "2026-01-01",
+      "previousValue": 2.24,
+      "change": -0.13000000000000034
+    },
+    "france": {
+      "label": "France",
+      "seriesId": "IRLTLT01FRM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.4,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.53,
+      "change": -0.1299999999999999
+    },
+    "italy": {
+      "label": "Italy",
+      "seriesId": "IRLTLT01ITM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.388,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.492,
+      "change": -0.10400000000000009
+    },
+    "spain": {
+      "label": "Spain",
+      "seriesId": "IRLTLT01ESM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.18,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.2692380952381,
+      "change": -0.0892380952381
+    },
+    "netherlands": {
+      "label": "Netherlands",
+      "seriesId": "IRLTLT01NLM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 2.849,
+      "previousDate": "2026-01-01",
+      "previousValue": 2.94,
+      "change": -0.09099999999999975
+    },
+    "canada": {
+      "label": "Canada",
+      "seriesId": "IRLTLT01CAM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.28842105263158,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.40238095238095,
+      "change": -0.11395989974937004
+    },
+    "australia": {
+      "label": "Australia",
+      "seriesId": "IRLTLT01AUM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 4.77,
+      "previousDate": "2026-01-01",
+      "previousValue": 4.75,
+      "change": 0.019999999999999574
+    }
+  }
 }
