@@ -105,6 +105,87 @@
       "previousDate": "2026-01-01",
       "previousValue": 4.75,
       "change": 0.019999999999999574
+    },
+    "switzerland": {
+      "label": "Switzerland",
+      "seriesId": "IRLTLT01CHM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 0.25,
+      "previousDate": "2026-01-01",
+      "previousValue": 0.27,
+      "change": -0.020000000000000018
+    },
+    "sweden": {
+      "label": "Sweden",
+      "seriesId": "IRLTLT01SEM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 2.64,
+      "previousDate": "2026-01-01",
+      "previousValue": 2.8004,
+      "change": -0.16039999999999965
+    },
+    "belgium": {
+      "label": "Belgium",
+      "seriesId": "IRLTLT01BEM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.3,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.36,
+      "change": -0.06000000000000005
+    },
+    "austria": {
+      "label": "Austria",
+      "seriesId": "IRLTLT01ATM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.0654,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.0763,
+      "change": -0.01089999999999991
+    },
+    "portugal": {
+      "label": "Portugal",
+      "seriesId": "IRLTLT01PTM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.13,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.19,
+      "change": -0.06000000000000005
+    },
+    "finland": {
+      "label": "Finland",
+      "seriesId": "IRLTLT01FIM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.16,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.251625,
+      "change": -0.09162500000000007
+    },
+    "ireland": {
+      "label": "Ireland",
+      "seriesId": "IRLTLT01IEM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.0339,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.0611,
+      "change": -0.027200000000000113
+    },
+    "denmark": {
+      "label": "Denmark",
+      "seriesId": "IRLTLT01DKM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 2.631,
+      "previousDate": "2026-01-01",
+      "previousValue": 2.728,
+      "change": -0.09700000000000042
     }
-  }
+  },
+  "errors": {}
 }
