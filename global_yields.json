@@ -185,6 +185,156 @@
       "previousDate": "2026-01-01",
       "previousValue": 2.728,
       "change": -0.09700000000000042
+    },
+    "norway": {
+      "label": "Norway",
+      "seriesId": "IRLTLT01NOM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 4.1625,
+      "previousDate": "2026-01-01",
+      "previousValue": 4.12228571428571,
+      "change": 0.04021428571428931
+    },
+    "india": {
+      "label": "India",
+      "seriesId": "INDIRLTLT01STM",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 6.78333333333333,
+      "previousDate": "2026-01-01",
+      "previousValue": 6.732,
+      "change": 0.051333333333329456
+    },
+    "south_korea": {
+      "label": "South Korea",
+      "seriesId": "IRLTLT01KRM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.612,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.485,
+      "change": 0.12700000000000022
+    },
+    "new_zealand": {
+      "label": "New Zealand",
+      "seriesId": "IRLTLT01NZM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 4.45,
+      "previousDate": "2026-01-01",
+      "previousValue": 4.51,
+      "change": -0.05999999999999961
+    },
+    "greece": {
+      "label": "Greece",
+      "seriesId": "IRLTLT01GRM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.39,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.42,
+      "change": -0.029999999999999805
+    },
+    "israel": {
+      "label": "Israel",
+      "seriesId": "IRLTLT01ILM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.89,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.94,
+      "change": -0.04999999999999982
+    },
+    "mexico": {
+      "label": "Mexico",
+      "seriesId": "IRLTLT01MXM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 8.74,
+      "previousDate": "2026-01-01",
+      "previousValue": 9.21,
+      "change": -0.47000000000000064
+    },
+    "poland": {
+      "label": "Poland",
+      "seriesId": "IRLTLT01PLM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 4.99,
+      "previousDate": "2026-01-01",
+      "previousValue": 5.1,
+      "change": -0.10999999999999943
+    },
+    "czech_republic": {
+      "label": "Czech Republic",
+      "seriesId": "IRLTLT01CZM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 4.37052161674474,
+      "previousDate": "2026-01-01",
+      "previousValue": 4.45986916094462,
+      "change": -0.08934754419987989
+    },
+    "hungary": {
+      "label": "Hungary",
+      "seriesId": "IRLTLT01HUM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 6.48,
+      "previousDate": "2026-01-01",
+      "previousValue": 6.67,
+      "change": -0.1899999999999995
+    },
+    "slovakia": {
+      "label": "Slovakia",
+      "seriesId": "IRLTLT01SKM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.27305,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.41005,
+      "change": -0.137
+    },
+    "slovenia": {
+      "label": "Slovenia",
+      "seriesId": "IRLTLT01SIM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.09,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.19,
+      "change": -0.10000000000000009
+    },
+    "lithuania": {
+      "label": "Lithuania",
+      "seriesId": "LTUIRLTLT01STM",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 2.88,
+      "previousDate": "2026-01-01",
+      "previousValue": 2.88,
+      "change": 0.0
+    },
+    "chile": {
+      "label": "Chile",
+      "seriesId": "IRLTLT01CLM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 5.3,
+      "previousDate": "2026-01-01",
+      "previousValue": 5.34133333333333,
+      "change": -0.04133333333333056
+    },
+    "south_africa": {
+      "label": "South Africa",
+      "seriesId": "IRLTLT01ZAM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 8.26,
+      "previousDate": "2026-01-01",
+      "previousValue": 8.61809523809524,
+      "change": -0.35809523809524
     }
   },
   "errors": {}
