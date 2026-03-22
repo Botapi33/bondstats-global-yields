@@ -11,6 +11,7 @@ if not API_KEY:
 OUTPUT_FILE = "global_yields.json"
 
 SERIES = {
+    # Existing countries - unchanged
     "united_states": {
         "label": "United States",
         "series_id": "DGS10",
@@ -99,6 +100,83 @@ SERIES = {
     "denmark": {
         "label": "Denmark",
         "series_id": "IRLTLT01DKM156N",
+        "frequency_hint": "Monthly"
+    },
+
+    # New countries added from Norway onward
+    "norway": {
+        "label": "Norway",
+        "series_id": "IRLTLT01NOM156N",
+        "frequency_hint": "Monthly"
+    },
+    "india": {
+        "label": "India",
+        "series_id": "INDIRLTLT01STM",
+        "frequency_hint": "Monthly"
+    },
+    "south_korea": {
+        "label": "South Korea",
+        "series_id": "IRLTLT01KRM156N",
+        "frequency_hint": "Monthly"
+    },
+    "new_zealand": {
+        "label": "New Zealand",
+        "series_id": "IRLTLT01NZM156N",
+        "frequency_hint": "Monthly"
+    },
+    "greece": {
+        "label": "Greece",
+        "series_id": "IRLTLT01GRM156N",
+        "frequency_hint": "Monthly"
+    },
+    "israel": {
+        "label": "Israel",
+        "series_id": "IRLTLT01ILM156N",
+        "frequency_hint": "Monthly"
+    },
+    "mexico": {
+        "label": "Mexico",
+        "series_id": "IRLTLT01MXM156N",
+        "frequency_hint": "Monthly"
+    },
+    "poland": {
+        "label": "Poland",
+        "series_id": "IRLTLT01PLM156N",
+        "frequency_hint": "Monthly"
+    },
+    "czech_republic": {
+        "label": "Czech Republic",
+        "series_id": "IRLTLT01CZM156N",
+        "frequency_hint": "Monthly"
+    },
+    "hungary": {
+        "label": "Hungary",
+        "series_id": "IRLTLT01HUM156N",
+        "frequency_hint": "Monthly"
+    },
+    "slovakia": {
+        "label": "Slovakia",
+        "series_id": "IRLTLT01SKM156N",
+        "frequency_hint": "Monthly"
+    },
+    "slovenia": {
+        "label": "Slovenia",
+        "series_id": "IRLTLT01SIM156N",
+        "frequency_hint": "Monthly"
+    },
+    "lithuania": {
+        "label": "Lithuania",
+        "series_id": "LTUIRLTLT01STM",
+        "frequency_hint": "Monthly"
+    },
+    "chile": {
+        "label": "Chile",
+        "series_id": "IRLTLT01CLM156N",
+        "frequency_hint": "Monthly"
+    },
+    "south_africa": {
+        "label": "South Africa",
+        "series_id": "IRLTLT01ZAM156N",
         "frequency_hint": "Monthly"
     }
 }
