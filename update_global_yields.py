@@ -60,6 +60,46 @@ SERIES = {
         "label": "Australia",
         "series_id": "IRLTLT01AUM156N",
         "frequency_hint": "Monthly"
+    },
+    "switzerland": {
+        "label": "Switzerland",
+        "series_id": "IRLTLT01CHM156N",
+        "frequency_hint": "Monthly"
+    },
+    "sweden": {
+        "label": "Sweden",
+        "series_id": "IRLTLT01SEM156N",
+        "frequency_hint": "Monthly"
+    },
+    "belgium": {
+        "label": "Belgium",
+        "series_id": "IRLTLT01BEM156N",
+        "frequency_hint": "Monthly"
+    },
+    "austria": {
+        "label": "Austria",
+        "series_id": "IRLTLT01ATM156N",
+        "frequency_hint": "Monthly"
+    },
+    "portugal": {
+        "label": "Portugal",
+        "series_id": "IRLTLT01PTM156N",
+        "frequency_hint": "Monthly"
+    },
+    "finland": {
+        "label": "Finland",
+        "series_id": "IRLTLT01FIM156N",
+        "frequency_hint": "Monthly"
+    },
+    "ireland": {
+        "label": "Ireland",
+        "series_id": "IRLTLT01IEM156N",
+        "frequency_hint": "Monthly"
+    },
+    "denmark": {
+        "label": "Denmark",
+        "series_id": "IRLTLT01DKM156N",
+        "frequency_hint": "Monthly"
     }
 }
 
@@ -99,6 +139,7 @@ def fetch_latest_observation(series_id: str):
 
 def main():
     countries = {}
+    errors = {}
 
     for slug, info in SERIES.items():
         try:
@@ -115,6 +156,7 @@ def main():
             }
             print(f"Updated {info['label']}: {obs['value']} ({obs['date']})")
         except Exception as e:
+            errors[slug] = str(e)
             print(f"Error updating {info['label']}: {e}")
 
     output = {
@@ -124,13 +166,17 @@ def main():
             "lastUpdated": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
             "note": "Some country series update monthly depending on source frequency."
         },
-        "countries": countries
+        "countries": countries,
+        "errors": errors
     }
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(output, f, indent=2, ensure_ascii=False)
 
     print("global_yields.json updated successfully.")
+    print(f"Countries updated: {len(countries)}")
+    if errors:
+        print(f"Countries with errors: {len(errors)}")
 
 if __name__ == "__main__":
     main()
