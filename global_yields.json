@@ -1,0 +1,9 @@
+{
+  "meta": {
+    "title": "BondStats Global Yields",
+    "source": "FRED",
+    "lastUpdated": "",
+    "note": "Some country series update monthly depending on source frequency."
+  },
+  "countries": {}
+}
