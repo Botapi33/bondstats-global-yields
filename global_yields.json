@@ -2,7 +2,7 @@
   "meta": {
     "title": "BondStats Global Yields",
     "source": "FRED",
-    "lastUpdated": "2026-04-05",
+    "lastUpdated": "2026-04-06",
     "note": "Some country series update monthly depending on source frequency."
   },
   "countries": {
@@ -116,26 +116,6 @@
       "previousValue": 0.27,
       "change": -0.020000000000000018
     },
-    "sweden": {
-      "label": "Sweden",
-      "seriesId": "IRLTLT01SEM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 2.64,
-      "previousDate": "2026-01-01",
-      "previousValue": 2.8004,
-      "change": -0.16039999999999965
-    },
-    "belgium": {
-      "label": "Belgium",
-      "seriesId": "IRLTLT01BEM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 3.3,
-      "previousDate": "2026-01-01",
-      "previousValue": 3.36,
-      "change": -0.06000000000000005
-    },
     "austria": {
       "label": "Austria",
       "seriesId": "IRLTLT01ATM156N",
@@ -146,66 +126,6 @@
       "previousValue": 3.0763,
       "change": -0.01089999999999991
     },
-    "portugal": {
-      "label": "Portugal",
-      "seriesId": "IRLTLT01PTM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 3.13,
-      "previousDate": "2026-01-01",
-      "previousValue": 3.19,
-      "change": -0.06000000000000005
-    },
-    "finland": {
-      "label": "Finland",
-      "seriesId": "IRLTLT01FIM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 3.16,
-      "previousDate": "2026-01-01",
-      "previousValue": 3.251625,
-      "change": -0.09162500000000007
-    },
-    "ireland": {
-      "label": "Ireland",
-      "seriesId": "IRLTLT01IEM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 3.0339,
-      "previousDate": "2026-01-01",
-      "previousValue": 3.0611,
-      "change": -0.027200000000000113
-    },
-    "denmark": {
-      "label": "Denmark",
-      "seriesId": "IRLTLT01DKM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 2.631,
-      "previousDate": "2026-01-01",
-      "previousValue": 2.728,
-      "change": -0.09700000000000042
-    },
-    "norway": {
-      "label": "Norway",
-      "seriesId": "IRLTLT01NOM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 4.1625,
-      "previousDate": "2026-01-01",
-      "previousValue": 4.12228571428571,
-      "change": 0.04021428571428931
-    },
-    "india": {
-      "label": "India",
-      "seriesId": "INDIRLTLT01STM",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 6.78333333333333,
-      "previousDate": "2026-01-01",
-      "previousValue": 6.732,
-      "change": 0.051333333333329456
-    },
     "south_korea": {
       "label": "South Korea",
       "seriesId": "IRLTLT01KRM156N",
@@ -215,16 +135,6 @@
       "previousDate": "2026-01-01",
       "previousValue": 3.485,
       "change": 0.12700000000000022
-    },
-    "new_zealand": {
-      "label": "New Zealand",
-      "seriesId": "IRLTLT01NZM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 4.45,
-      "previousDate": "2026-01-01",
-      "previousValue": 4.51,
-      "change": -0.05999999999999961
     },
     "greece": {
       "label": "Greece",
@@ -256,36 +166,6 @@
       "previousValue": 9.21,
       "change": -0.47000000000000064
     },
-    "poland": {
-      "label": "Poland",
-      "seriesId": "IRLTLT01PLM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 4.99,
-      "previousDate": "2026-01-01",
-      "previousValue": 5.1,
-      "change": -0.10999999999999943
-    },
-    "czech_republic": {
-      "label": "Czech Republic",
-      "seriesId": "IRLTLT01CZM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 4.37052161674474,
-      "previousDate": "2026-01-01",
-      "previousValue": 4.45986916094462,
-      "change": -0.08934754419987989
-    },
-    "hungary": {
-      "label": "Hungary",
-      "seriesId": "IRLTLT01HUM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 6.48,
-      "previousDate": "2026-01-01",
-      "previousValue": 6.67,
-      "change": -0.1899999999999995
-    },
     "slovakia": {
       "label": "Slovakia",
       "seriesId": "IRLTLT01SKM156N",
@@ -296,16 +176,6 @@
       "previousValue": 3.41005,
       "change": -0.137
     },
-    "slovenia": {
-      "label": "Slovenia",
-      "seriesId": "IRLTLT01SIM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 3.09,
-      "previousDate": "2026-01-01",
-      "previousValue": 3.19,
-      "change": -0.10000000000000009
-    },
     "lithuania": {
       "label": "Lithuania",
       "seriesId": "LTUIRLTLT01STM",
@@ -315,27 +185,23 @@
       "previousDate": "2026-01-01",
       "previousValue": 2.88,
       "change": 0.0
-    },
-    "chile": {
-      "label": "Chile",
-      "seriesId": "IRLTLT01CLM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 5.3,
-      "previousDate": "2026-01-01",
-      "previousValue": 5.34133333333333,
-      "change": -0.04133333333333056
-    },
-    "south_africa": {
-      "label": "South Africa",
-      "seriesId": "IRLTLT01ZAM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 8.26,
-      "previousDate": "2026-01-01",
-      "previousValue": 8.61809523809524,
-      "change": -0.35809523809524
     }
   },
-  "errors": {}
+  "errors": {
+    "sweden": "HTTP Error 500: Internal Server Error",
+    "belgium": "HTTP Error 500: Internal Server Error",
+    "portugal": "HTTP Error 500: Internal Server Error",
+    "finland": "HTTP Error 500: Internal Server Error",
+    "ireland": "HTTP Error 500: Internal Server Error",
+    "denmark": "HTTP Error 500: Internal Server Error",
+    "norway": "HTTP Error 500: Internal Server Error",
+    "india": "HTTP Error 500: Internal Server Error",
+    "new_zealand": "HTTP Error 500: Internal Server Error",
+    "poland": "HTTP Error 500: Internal Server Error",
+    "czech_republic": "HTTP Error 500: Internal Server Error",
+    "hungary": "HTTP Error 500: Internal Server Error",
+    "slovenia": "HTTP Error 500: Internal Server Error",
+    "chile": "HTTP Error 500: Internal Server Error",
+    "south_africa": "HTTP Error 500: Internal Server Error"
+  }
 }
