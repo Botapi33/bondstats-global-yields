@@ -2,7 +2,7 @@
   "meta": {
     "title": "BondStats Global Yields",
     "source": "FRED",
-    "lastUpdated": "2026-04-07",
+    "lastUpdated": "2026-04-08",
     "note": "Some country series update monthly depending on source frequency."
   },
   "countries": {
@@ -10,11 +10,11 @@
       "label": "United States",
       "seriesId": "DGS10",
       "frequency": "Daily",
-      "date": "2026-04-03",
-      "value": 4.35,
-      "previousDate": "2026-04-02",
-      "previousValue": 4.31,
-      "change": 0.040000000000000036
+      "date": "2026-04-06",
+      "value": 4.34,
+      "previousDate": "2026-04-03",
+      "previousValue": 4.35,
+      "change": -0.009999999999999787
     },
     "germany": {
       "label": "Germany",
