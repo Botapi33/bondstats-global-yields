@@ -2,7 +2,7 @@
   "meta": {
     "title": "BondStats Global Yields",
     "source": "FRED",
-    "lastUpdated": "2026-04-10",
+    "lastUpdated": "2026-04-11",
     "note": "Some country series update monthly depending on source frequency."
   },
   "countries": {
@@ -10,11 +10,11 @@
       "label": "United States",
       "seriesId": "DGS10",
       "frequency": "Daily",
-      "date": "2026-04-08",
+      "date": "2026-04-09",
       "value": 4.29,
-      "previousDate": "2026-04-07",
-      "previousValue": 4.33,
-      "change": -0.040000000000000036
+      "previousDate": "2026-04-08",
+      "previousValue": 4.29,
+      "change": 0.0
     },
     "germany": {
       "label": "Germany",
@@ -325,17 +325,9 @@
       "previousDate": "2026-01-01",
       "previousValue": 5.34133333333333,
       "change": -0.04133333333333056
-    },
-    "south_africa": {
-      "label": "South Africa",
-      "seriesId": "IRLTLT01ZAM156N",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 8.26,
-      "previousDate": "2026-01-01",
-      "previousValue": 8.61809523809524,
-      "change": -0.35809523809524
     }
   },
-  "errors": {}
+  "errors": {
+    "south_africa": "HTTP Error 502: Bad Gateway"
+  }
 }
