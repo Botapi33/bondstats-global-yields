@@ -2,7 +2,7 @@
   "meta": {
     "title": "BondStats Global Yields",
     "source": "FRED",
-    "lastUpdated": "2026-04-12",
+    "lastUpdated": "2026-04-13",
     "note": "Some country series update monthly depending on source frequency."
   },
   "countries": {
