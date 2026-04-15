@@ -2,7 +2,7 @@
   "meta": {
     "title": "BondStats Global Yields",
     "source": "FRED",
-    "lastUpdated": "2026-04-14",
+    "lastUpdated": "2026-04-15",
     "note": "Some country series update monthly depending on source frequency."
   },
   "countries": {
@@ -10,11 +10,11 @@
       "label": "United States",
       "seriesId": "DGS10",
       "frequency": "Daily",
-      "date": "2026-04-10",
-      "value": 4.31,
-      "previousDate": "2026-04-09",
-      "previousValue": 4.29,
-      "change": 0.019999999999999574
+      "date": "2026-04-13",
+      "value": 4.3,
+      "previousDate": "2026-04-10",
+      "previousValue": 4.31,
+      "change": -0.009999999999999787
     },
     "germany": {
       "label": "Germany",
@@ -206,6 +206,16 @@
       "previousValue": 6.732,
       "change": 0.051333333333329456
     },
+    "south_korea": {
+      "label": "South Korea",
+      "seriesId": "IRLTLT01KRM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.612,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.485,
+      "change": 0.12700000000000022
+    },
     "new_zealand": {
       "label": "New Zealand",
       "seriesId": "IRLTLT01NZM156N",
@@ -286,6 +296,16 @@
       "previousValue": 3.41005,
       "change": -0.137
     },
+    "slovenia": {
+      "label": "Slovenia",
+      "seriesId": "IRLTLT01SIM156N",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.09,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.19,
+      "change": -0.10000000000000009
+    },
     "lithuania": {
       "label": "Lithuania",
       "seriesId": "LTUIRLTLT01STM",
@@ -317,8 +337,5 @@
       "change": -0.35809523809524
     }
   },
-  "errors": {
-    "south_korea": "HTTP Error 500: Internal Server Error",
-    "slovenia": "HTTP Error 500: Internal Server Error"
-  }
+  "errors": {}
 }
