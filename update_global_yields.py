@@ -34,7 +34,7 @@ SERIES = {
         "fallback_series_id": "IRLTLT01GBM156N"
     },
 
-    # ✅ CANADA UPGRADE (BoC Primary + FRED fallback)
+    # NEW SYSTEM COUNTRIES
     "canada": {
         "label": "Canada",
         "series_id": "V39055",
@@ -43,37 +43,22 @@ SERIES = {
         "fallback_source": "fred",
         "fallback_series_id": "IRLTLT01CAM156N"
     },
+    "australia": {
+        "label": "Australia",
+        "series_id": "F2",
+        "frequency_hint": "Daily",
+        "primary_source": "rba",
+        "fallback_source": "fred",
+        "fallback_series_id": "IRLTLT01AUM156N"
+    },
 
-    # FRED Countries (unchanged)
+    # FRED Monthly Countries
     "germany": {"label": "Germany", "series_id": "IRLTLT01DEM156N", "frequency_hint": "Monthly"},
     "france": {"label": "France", "series_id": "IRLTLT01FRM156N", "frequency_hint": "Monthly"},
     "italy": {"label": "Italy", "series_id": "IRLTLT01ITM156N", "frequency_hint": "Monthly"},
     "spain": {"label": "Spain", "series_id": "IRLTLT01ESM156N", "frequency_hint": "Monthly"},
     "netherlands": {"label": "Netherlands", "series_id": "IRLTLT01NLM156N", "frequency_hint": "Monthly"},
-    "australia": {"label": "Australia", "series_id": "IRLTLT01AUM156N", "frequency_hint": "Monthly"},
     "switzerland": {"label": "Switzerland", "series_id": "IRLTLT01CHM156N", "frequency_hint": "Monthly"},
-    "sweden": {"label": "Sweden", "series_id": "IRLTLT01SEM156N", "frequency_hint": "Monthly"},
-    "belgium": {"label": "Belgium", "series_id": "IRLTLT01BEM156N", "frequency_hint": "Monthly"},
-    "austria": {"label": "Austria", "series_id": "IRLTLT01ATM156N", "frequency_hint": "Monthly"},
-    "portugal": {"label": "Portugal", "series_id": "IRLTLT01PTM156N", "frequency_hint": "Monthly"},
-    "finland": {"label": "Finland", "series_id": "IRLTLT01FIM156N", "frequency_hint": "Monthly"},
-    "ireland": {"label": "Ireland", "series_id": "IRLTLT01IEM156N", "frequency_hint": "Monthly"},
-    "denmark": {"label": "Denmark", "series_id": "IRLTLT01DKM156N", "frequency_hint": "Monthly"},
-    "norway": {"label": "Norway", "series_id": "IRLTLT01NOM156N", "frequency_hint": "Monthly"},
-    "india": {"label": "India", "series_id": "INDIRLTLT01STM", "frequency_hint": "Monthly"},
-    "south_korea": {"label": "South Korea", "series_id": "IRLTLT01KRM156N", "frequency_hint": "Monthly"},
-    "new_zealand": {"label": "New Zealand", "series_id": "IRLTLT01NZM156N", "frequency_hint": "Monthly"},
-    "greece": {"label": "Greece", "series_id": "IRLTLT01GRM156N", "frequency_hint": "Monthly"},
-    "israel": {"label": "Israel", "series_id": "IRLTLT01ILM156N", "frequency_hint": "Monthly"},
-    "mexico": {"label": "Mexico", "series_id": "IRLTLT01MXM156N", "frequency_hint": "Monthly"},
-    "poland": {"label": "Poland", "series_id": "IRLTLT01PLM156N", "frequency_hint": "Monthly"},
-    "czech_republic": {"label": "Czech Republic", "series_id": "IRLTLT01CZM156N", "frequency_hint": "Monthly"},
-    "hungary": {"label": "Hungary", "series_id": "IRLTLT01HUM156N", "frequency_hint": "Monthly"},
-    "slovakia": {"label": "Slovakia", "series_id": "IRLTLT01SKM156N", "frequency_hint": "Monthly"},
-    "slovenia": {"label": "Slovenia", "series_id": "IRLTLT01SIM156N", "frequency_hint": "Monthly"},
-    "lithuania": {"label": "Lithuania", "series_id": "LTUIRLTLT01STM", "frequency_hint": "Monthly"},
-    "chile": {"label": "Chile", "series_id": "IRLTLT01CLM156N", "frequency_hint": "Monthly"},
-    "south_africa": {"label": "South Africa", "series_id": "IRLTLT01ZAM156N", "frequency_hint": "Monthly"}
 }
 
 # ---------------- UTIL ----------------
@@ -153,6 +138,11 @@ def fetch_boe():
             except:
                 continue
 
+        if len(parsed) < 2:
+            return None
+
+        parsed.sort(key=lambda x: datetime.strptime(x[0], "%d/%m/%Y"))
+
         latest = parsed[-1]
         prev = parsed[-2]
 
@@ -167,30 +157,51 @@ def fetch_boe():
     except:
         return None
 
-# ---------------- BOC (NEW) ----------------
+# ---------------- BOC ----------------
 
 def fetch_boc(series_id):
     try:
         url = f"https://www.bankofcanada.ca/valet/observations?seriesName={series_id}&recent=2"
-
         data = json.loads(urlopen(Request(url)).read().decode("utf-8"))
-        obs = data.get("observations", [])
 
+        obs = data.get("observations", [])
         parsed = []
 
         for o in obs:
-            date = o.get("d")
+            val = o.get(series_id, {}).get("v")
+            if val:
+                parsed.append((o["d"], float(val)))
 
-            val = None
-            if isinstance(o.get(series_id), dict):
-                raw = o[series_id].get("v")
-                if raw not in (None, "", "null"):
-                    val = float(raw)
+        if len(parsed) < 1:
+            return None
 
-            if date and val is not None:
-                parsed.append((date, val))
+        parsed.sort(key=lambda x: x[0])
 
-        if len(parsed) == 0:
+        latest = parsed[-1]
+        prev = parsed[-2] if len(parsed) > 1 else None
+
+        return {
+            "date": latest[0],
+            "value": latest[1],
+            "previousDate": prev[0] if prev else None,
+            "previousValue": prev[1] if prev else None,
+            "change": latest[1] - prev[1] if prev else None
+        }
+
+    except:
+        return None
+
+# ---------------- RBA ----------------
+
+def fetch_rba(series_id):
+    try:
+        url = f"https://api.rba.gov.au/statistics/timeseries/{series_id}?format=json"
+        data = json.loads(urlopen(Request(url)).read().decode("utf-8"))
+
+        obs = data["series"]["observations"]
+        parsed = [(o["date"], float(o["value"])) for o in obs if o["value"]]
+
+        if len(parsed) < 1:
             return None
 
         parsed.sort(key=lambda x: x[0])
@@ -218,30 +229,34 @@ def fetch_data(info):
         if primary == "boe":
             data = fetch_boe()
             if data:
-                return data, "boe"
+                return data, "boe", "Daily"
 
         if primary == "ecb":
             data = fetch_ecb()
             if data:
-                return data, "ecb"
+                return data, "ecb", "Daily"
 
         if primary == "boc":
-            data = fetch_boc(info.get("series_id"))
+            data = fetch_boc(info["series_id"])
             if data:
-                return data, "boc"
+                return data, "boc", "Daily"
 
-        if info.get("series_id") and primary == "fred":
-            return fetch_fred(info["series_id"]), "fred"
+        if primary == "rba":
+            data = fetch_rba(info["series_id"])
+            if data:
+                return data, "rba", "Daily"
+
+        if primary == "fred":
+            data = fetch_fred(info["series_id"])
+            return data, "fred", info.get("frequency_hint", "Monthly")
 
     except:
         pass
 
-    # fallback
-    try:
-        if info.get("fallback_source") == "fred":
-            return fetch_fred(info.get("fallback_series_id")), "fred"
-    except:
-        pass
+    # Fallback → FRED (Monthly)
+    if info.get("fallback_source") == "fred":
+        data = fetch_fred(info.get("fallback_series_id"))
+        return data, "fred", "Monthly"
 
     raise RuntimeError("All sources failed")
 
@@ -253,13 +268,13 @@ def main():
 
     for slug, info in SERIES.items():
         try:
-            obs, source = fetch_data(info)
+            obs, source, freq = fetch_data(info)
 
             countries[slug] = {
                 "label": info["label"],
                 "seriesId": info.get("series_id"),
                 "source": source,
-                "frequency": info["frequency_hint"],
+                "frequency": freq,
                 "date": obs["date"],
                 "value": obs["value"],
                 "previousDate": obs["previousDate"],
@@ -267,7 +282,7 @@ def main():
                 "change": obs["change"]
             }
 
-            print(f"{info['label']} updated via {source}")
+            print(f"{info['label']} updated via {source} ({freq})")
 
         except Exception as e:
             errors[slug] = str(e)
@@ -276,7 +291,7 @@ def main():
     output = {
         "meta": {
             "title": "BondStats Global Yields",
-            "source": "FRED + ECB + BoE + BoC",
+            "source": "FRED + ECB + BoE + BoC + RBA",
             "lastUpdated": datetime.now(timezone.utc).strftime("%Y-%m-%d")
         },
         "countries": countries,
