@@ -5,6 +5,17 @@
     "lastUpdated": "2026-04-16"
   },
   "countries": {
+    "united_states": {
+      "label": "United States",
+      "seriesId": "DGS10",
+      "source": "fred",
+      "frequency": "Daily",
+      "date": "2026-04-14",
+      "value": 4.26,
+      "previousDate": "2026-04-13",
+      "previousValue": 4.3,
+      "change": -0.040000000000000036
+    },
     "euro_area": {
       "label": "Euro Area",
       "seriesId": null,
@@ -358,7 +369,5 @@
       "change": 0.793000000000001
     }
   },
-  "errors": {
-    "united_states": "All sources failed"
-  }
+  "errors": {}
 }
