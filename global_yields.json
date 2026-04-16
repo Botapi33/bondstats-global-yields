@@ -1,9 +1,9 @@
 {
   "meta": {
     "title": "BondStats Global Yields",
-    "source": "FRED",
+    "source": "Mixed (FRED + BoE + ECB)",
     "lastUpdated": "2026-04-16",
-    "note": "Some country series update monthly depending on source frequency."
+    "note": "Some country series update monthly depending on source frequency. UK uses BoE with FRED fallback. Euro Area uses ECB."
   },
   "countries": {
     "united_states": {
@@ -17,27 +17,16 @@
       "previousValue": 4.3,
       "change": -0.040000000000000036
     },
-    "germany": {
-      "label": "Germany",
-      "seriesId": "IRLTLT01DEM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 2.9052380952,
-      "previousDate": "2026-02-01",
-      "previousValue": 2.745,
-      "change": 0.16023809519999999
-    },
-    "united_kingdom": {
-      "label": "United Kingdom",
-      "seriesId": "IRLTLT01GBM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 4.7007,
-      "previousDate": "2026-02-01",
-      "previousValue": 4.4324,
-      "change": 0.2683
+    "euro_area": {
+      "label": "Euro Area",
+      "seriesId": null,
+      "source": "ecb",
+      "frequency": "Daily",
+      "date": "2026-04-15",
+      "value": 3.0888161219,
+      "previousDate": "2026-04-14",
+      "previousValue": 3.1121828868,
+      "change": -0.023366764900000003
     },
     "japan": {
       "label": "Japan",
@@ -50,28 +39,6 @@
       "previousValue": 2.11,
       "change": 0.23500000000000032
     },
-    "france": {
-      "label": "France",
-      "seriesId": "IRLTLT01FRM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 3.4,
-      "previousDate": "2026-01-01",
-      "previousValue": 3.53,
-      "change": -0.1299999999999999
-    },
-    "italy": {
-      "label": "Italy",
-      "seriesId": "IRLTLT01ITM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 3.388,
-      "previousDate": "2026-01-01",
-      "previousValue": 3.492,
-      "change": -0.10400000000000009
-    },
     "spain": {
       "label": "Spain",
       "seriesId": "IRLTLT01ESM156N",
@@ -82,28 +49,6 @@
       "previousDate": "2026-02-01",
       "previousValue": 3.1826,
       "change": 0.1955428571428599
-    },
-    "netherlands": {
-      "label": "Netherlands",
-      "seriesId": "IRLTLT01NLM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 2.849,
-      "previousDate": "2026-01-01",
-      "previousValue": 2.94,
-      "change": -0.09099999999999975
-    },
-    "canada": {
-      "label": "Canada",
-      "seriesId": "IRLTLT01CAM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 3.44,
-      "previousDate": "2026-02-01",
-      "previousValue": 3.28842105263158,
-      "change": 0.15157894736841993
     },
     "australia": {
       "label": "Australia",
@@ -126,17 +71,6 @@
       "previousDate": "2026-02-01",
       "previousValue": 0.25,
       "change": 0.15000000000000002
-    },
-    "sweden": {
-      "label": "Sweden",
-      "seriesId": "IRLTLT01SEM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 2.76,
-      "previousDate": "2026-02-01",
-      "previousValue": 2.64,
-      "change": 0.11999999999999966
     },
     "belgium": {
       "label": "Belgium",
@@ -192,28 +126,6 @@
       "previousDate": "2026-01-01",
       "previousValue": 3.0611,
       "change": -0.027200000000000113
-    },
-    "denmark": {
-      "label": "Denmark",
-      "seriesId": "IRLTLT01DKM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 2.631,
-      "previousDate": "2026-01-01",
-      "previousValue": 2.728,
-      "change": -0.09700000000000042
-    },
-    "norway": {
-      "label": "Norway",
-      "seriesId": "IRLTLT01NOM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 4.24533333333333,
-      "previousDate": "2026-02-01",
-      "previousValue": 4.1625,
-      "change": 0.08283333333333065
     },
     "india": {
       "label": "India",
@@ -303,28 +215,6 @@
       "previousValue": 6.48,
       "change": 0.6499999999999995
     },
-    "slovakia": {
-      "label": "Slovakia",
-      "seriesId": "IRLTLT01SKM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 3.27305,
-      "previousDate": "2026-01-01",
-      "previousValue": 3.41005,
-      "change": -0.137
-    },
-    "slovenia": {
-      "label": "Slovenia",
-      "seriesId": "IRLTLT01SIM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 3.09,
-      "previousDate": "2026-01-01",
-      "previousValue": 3.19,
-      "change": -0.10000000000000009
-    },
     "lithuania": {
       "label": "Lithuania",
       "seriesId": "LTUIRLTLT01STM",
@@ -335,11 +225,32 @@
       "previousDate": "2026-01-01",
       "previousValue": 2.88,
       "change": 0.0
+    },
+    "south_africa": {
+      "label": "South Africa",
+      "seriesId": "IRLTLT01ZAM156N",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 9.05,
+      "previousDate": "2026-02-01",
+      "previousValue": 8.257,
+      "change": 0.793000000000001
     }
   },
   "errors": {
-    "poland": "HTTP Error 500: Internal Server Error",
-    "chile": "HTTP Error 500: Internal Server Error",
-    "south_africa": "HTTP Error 500: Internal Server Error"
+    "germany": "Primary failed (fred): HTTP Error 500: Internal Server Error",
+    "united_kingdom": "Primary failed (boe): No valid BoE observations found; Fallback failed (fred): HTTP Error 500: Internal Server Error",
+    "france": "Primary failed (fred): HTTP Error 500: Internal Server Error",
+    "italy": "Primary failed (fred): HTTP Error 500: Internal Server Error",
+    "netherlands": "Primary failed (fred): HTTP Error 500: Internal Server Error",
+    "canada": "Primary failed (fred): HTTP Error 500: Internal Server Error",
+    "sweden": "Primary failed (fred): HTTP Error 502: Bad Gateway",
+    "denmark": "Primary failed (fred): HTTP Error 502: Bad Gateway",
+    "norway": "Primary failed (fred): HTTP Error 500: Internal Server Error",
+    "poland": "Primary failed (fred): HTTP Error 500: Internal Server Error",
+    "slovakia": "Primary failed (fred): HTTP Error 500: Internal Server Error",
+    "slovenia": "Primary failed (fred): HTTP Error 500: Internal Server Error",
+    "chile": "Primary failed (fred): HTTP Error 500: Internal Server Error"
   }
 }
