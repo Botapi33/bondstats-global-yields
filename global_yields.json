@@ -1,15 +1,13 @@
 {
   "meta": {
     "title": "BondStats Global Yields",
-    "source": "FRED + ECB + BoE + BoC + RBA",
     "lastUpdated": "2026-04-16"
   },
   "countries": {
     "united_states": {
       "label": "United States",
-      "seriesId": "DGS10",
       "source": "fred",
-      "frequency": "Daily",
+      "frequency": "Monthly",
       "date": "2026-04-15",
       "value": 4.29,
       "previousDate": "2026-04-14",
@@ -18,7 +16,6 @@
     },
     "euro_area": {
       "label": "Euro Area",
-      "seriesId": null,
       "source": "ecb",
       "frequency": "Daily",
       "date": "2026-04-15",
@@ -29,8 +26,7 @@
     },
     "united_kingdom": {
       "label": "United Kingdom",
-      "seriesId": "IRLTLT01GBM156N",
-      "source": "fred",
+      "source": "boe",
       "frequency": "Monthly",
       "date": "2026-03-01",
       "value": 4.7007,
@@ -40,8 +36,7 @@
     },
     "canada": {
       "label": "Canada",
-      "seriesId": "V39055",
-      "source": "fred",
+      "source": "boc",
       "frequency": "Monthly",
       "date": "2026-03-01",
       "value": 3.44,
@@ -51,80 +46,13 @@
     },
     "australia": {
       "label": "Australia",
-      "seriesId": "F2",
-      "source": "fred",
+      "source": "rba",
       "frequency": "Monthly",
       "date": "2026-03-01",
       "value": 4.9,
       "previousDate": "2026-02-01",
       "previousValue": 4.758,
       "change": 0.14200000000000035
-    },
-    "germany": {
-      "label": "Germany",
-      "seriesId": "IRLTLT01DEM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 2.9052380952,
-      "previousDate": "2026-02-01",
-      "previousValue": 2.745,
-      "change": 0.16023809519999999
-    },
-    "france": {
-      "label": "France",
-      "seriesId": "IRLTLT01FRM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 3.4,
-      "previousDate": "2026-01-01",
-      "previousValue": 3.53,
-      "change": -0.1299999999999999
-    },
-    "italy": {
-      "label": "Italy",
-      "seriesId": "IRLTLT01ITM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 3.388,
-      "previousDate": "2026-01-01",
-      "previousValue": 3.492,
-      "change": -0.10400000000000009
-    },
-    "spain": {
-      "label": "Spain",
-      "seriesId": "IRLTLT01ESM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 3.37814285714286,
-      "previousDate": "2026-02-01",
-      "previousValue": 3.1826,
-      "change": 0.1955428571428599
-    },
-    "netherlands": {
-      "label": "Netherlands",
-      "seriesId": "IRLTLT01NLM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 2.849,
-      "previousDate": "2026-01-01",
-      "previousValue": 2.94,
-      "change": -0.09099999999999975
-    },
-    "switzerland": {
-      "label": "Switzerland",
-      "seriesId": "IRLTLT01CHM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 0.4,
-      "previousDate": "2026-02-01",
-      "previousValue": 0.25,
-      "change": 0.15000000000000002
     }
   },
   "errors": {}
