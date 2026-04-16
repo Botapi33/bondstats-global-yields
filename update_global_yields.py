@@ -1,73 +1,185 @@
 import json
 import os
 from datetime import datetime, timezone
-from urllib.request import urlopen, Request
 from urllib.parse import urlencode
+from urllib.request import urlopen
 
 API_KEY = os.environ.get("FRED_API_KEY")
 if not API_KEY:
-    raise RuntimeError("Missing FRED_API_KEY")
+    raise RuntimeError("Missing FRED_API_KEY environment variable.")
 
 OUTPUT_FILE = "global_yields.json"
 
-# ================= ECB COUNTRIES =================
-
-ECB_COUNTRIES = {
-    "euro_area": "U2",
-    "germany": "DE",
-    "france": "FR",
-    "italy": "IT",
-    "spain": "ES",
-    "netherlands": "NL",
-    "belgium": "BE",
-    "austria": "AT"
+SERIES = {
+    "united_states": {
+        "label": "United States",
+        "series_id": "DGS10",
+        "frequency_hint": "Daily"
+    },
+    "germany": {
+        "label": "Germany",
+        "series_id": "IRLTLT01DEM156N",
+        "frequency_hint": "Monthly"
+    },
+    "united_kingdom": {
+        "label": "United Kingdom",
+        "series_id": "IRLTLT01GBM156N",
+        "frequency_hint": "Daily",
+        "fallback_frequency_hint": "Monthly"
+    },
+    "japan": {
+        "label": "Japan",
+        "series_id": "IRLTLT01JPM156N",
+        "frequency_hint": "Monthly"
+    },
+    "france": {
+        "label": "France",
+        "series_id": "IRLTLT01FRM156N",
+        "frequency_hint": "Monthly"
+    },
+    "italy": {
+        "label": "Italy",
+        "series_id": "IRLTLT01ITM156N",
+        "frequency_hint": "Monthly"
+    },
+    "spain": {
+        "label": "Spain",
+        "series_id": "IRLTLT01ESM156N",
+        "frequency_hint": "Monthly"
+    },
+    "netherlands": {
+        "label": "Netherlands",
+        "series_id": "IRLTLT01NLM156N",
+        "frequency_hint": "Monthly"
+    },
+    "canada": {
+        "label": "Canada",
+        "series_id": "IRLTLT01CAM156N",
+        "frequency_hint": "Monthly"
+    },
+    "australia": {
+        "label": "Australia",
+        "series_id": "IRLTLT01AUM156N",
+        "frequency_hint": "Monthly"
+    },
+    "switzerland": {
+        "label": "Switzerland",
+        "series_id": "IRLTLT01CHM156N",
+        "frequency_hint": "Monthly"
+    },
+    "sweden": {
+        "label": "Sweden",
+        "series_id": "IRLTLT01SEM156N",
+        "frequency_hint": "Monthly"
+    },
+    "belgium": {
+        "label": "Belgium",
+        "series_id": "IRLTLT01BEM156N",
+        "frequency_hint": "Monthly"
+    },
+    "austria": {
+        "label": "Austria",
+        "series_id": "IRLTLT01ATM156N",
+        "frequency_hint": "Monthly"
+    },
+    "portugal": {
+        "label": "Portugal",
+        "series_id": "IRLTLT01PTM156N",
+        "frequency_hint": "Monthly"
+    },
+    "finland": {
+        "label": "Finland",
+        "series_id": "IRLTLT01FIM156N",
+        "frequency_hint": "Monthly"
+    },
+    "ireland": {
+        "label": "Ireland",
+        "series_id": "IRLTLT01IEM156N",
+        "frequency_hint": "Monthly"
+    },
+    "denmark": {
+        "label": "Denmark",
+        "series_id": "IRLTLT01DKM156N",
+        "frequency_hint": "Monthly"
+    },
+    "norway": {
+        "label": "Norway",
+        "series_id": "IRLTLT01NOM156N",
+        "frequency_hint": "Monthly"
+    },
+    "india": {
+        "label": "India",
+        "series_id": "INDIRLTLT01STM",
+        "frequency_hint": "Monthly"
+    },
+    "south_korea": {
+        "label": "South Korea",
+        "series_id": "IRLTLT01KRM156N",
+        "frequency_hint": "Monthly"
+    },
+    "new_zealand": {
+        "label": "New Zealand",
+        "series_id": "IRLTLT01NZM156N",
+        "frequency_hint": "Monthly"
+    },
+    "greece": {
+        "label": "Greece",
+        "series_id": "IRLTLT01GRM156N",
+        "frequency_hint": "Monthly"
+    },
+    "israel": {
+        "label": "Israel",
+        "series_id": "IRLTLT01ILM156N",
+        "frequency_hint": "Monthly"
+    },
+    "mexico": {
+        "label": "Mexico",
+        "series_id": "IRLTLT01MXM156N",
+        "frequency_hint": "Monthly"
+    },
+    "poland": {
+        "label": "Poland",
+        "series_id": "IRLTLT01PLM156N",
+        "frequency_hint": "Monthly"
+    },
+    "czech_republic": {
+        "label": "Czech Republic",
+        "series_id": "IRLTLT01CZM156N",
+        "frequency_hint": "Monthly"
+    },
+    "hungary": {
+        "label": "Hungary",
+        "series_id": "IRLTLT01HUM156N",
+        "frequency_hint": "Monthly"
+    },
+    "slovakia": {
+        "label": "Slovakia",
+        "series_id": "IRLTLT01SKM156N",
+        "frequency_hint": "Monthly"
+    },
+    "slovenia": {
+        "label": "Slovenia",
+        "series_id": "IRLTLT01SIM156N",
+        "frequency_hint": "Monthly"
+    },
+    "lithuania": {
+        "label": "Lithuania",
+        "series_id": "LTUIRLTLT01STM",
+        "frequency_hint": "Monthly"
+    },
+    "chile": {
+        "label": "Chile",
+        "series_id": "IRLTLT01CLM156N",
+        "frequency_hint": "Monthly"
+    },
+    "south_africa": {
+        "label": "South Africa",
+        "series_id": "IRLTLT01ZAM156N",
+        "frequency_hint": "Monthly"
+    }
 }
 
-# ================= FRED FALLBACK =================
-
-FRED_SERIES = {
-    "united_states": "DGS10",
-    "united_kingdom": "IRLTLT01GBM156N",
-    "canada": "IRLTLT01CAM156N",
-    "japan": "IRLTLT01JPM156N",
-    "australia": "IRLTLT01AUM156N"
-}
-
-# ================= HELPERS =================
-
-def safe_float(x):
-    try:
-        return float(x)
-    except:
-        return None
-
-# ================= ECB FETCH =================
-
-def fetch_ecb(country, maturity):
-    try:
-        url = f"https://data-api.ecb.europa.eu/service/data/YC/B.{country}.EUR.4F.G_N_A.SV_C_YM.SR_{maturity}?format=jsondata"
-        data = json.loads(urlopen(Request(url)).read().decode())
-
-        series = next(iter(data["dataSets"][0]["series"].values()))
-        obs = series["observations"]
-        keys = sorted(obs.keys(), key=lambda x: int(x))
-
-        latest = keys[-1]
-        prev = keys[-2]
-
-        time = data["structure"]["dimensions"]["observation"][0]["values"]
-
-        return {
-            "date": time[int(latest)]["id"],
-            "value": float(obs[latest][0]),
-            "prev": float(obs[prev][0])
-        }
-    except:
-        return None
-
-# ================= FRED FETCH =================
-
-def fetch_fred(series_id):
+def fetch_latest_observation(series_id: str):
     params = urlencode({
         "series_id": series_id,
         "api_key": API_KEY,
@@ -75,150 +187,83 @@ def fetch_fred(series_id):
         "sort_order": "desc",
         "limit": 12
     })
-
     url = f"https://api.stlouisfed.org/fred/series/observations?{params}"
 
-    data = json.loads(urlopen(url).read().decode())
+    with urlopen(url) as response:
+        data = json.loads(response.read().decode("utf-8"))
 
-    obs = [o for o in data["observations"] if o["value"] not in (".", None)]
-    latest = obs[0]
-    prev = obs[1] if len(obs) > 1 else None
+    observations = data.get("observations", [])
+    valid = [o for o in observations if o.get("value") not in (None, ".", "")]
+
+    if not valid:
+        raise RuntimeError(f"No valid observations found for {series_id}")
+
+    latest = valid[0]
+    previous = valid[1] if len(valid) > 1 else None
+
+    latest_value = float(latest["value"])
+    previous_value = float(previous["value"]) if previous else None
+    change = latest_value - previous_value if previous_value is not None else None
 
     return {
         "date": latest["date"],
-        "value": safe_float(latest["value"]),
-        "prev": safe_float(prev["value"]) if prev else None
+        "value": latest_value,
+        "previousDate": previous["date"] if previous else None,
+        "previousValue": previous_value,
+        "change": change
     }
-
-# ================= BOE FETCH =================
-
-def fetch_boe():
-    try:
-        url = "https://api.allorigins.win/raw?url=https://www.bankofengland.co.uk/boeapps/database/FromShowColumns.asp?csv.x=yes&SeriesCodes=IUMAJNB"
-        raw = urlopen(url).read().decode()
-
-        lines = [l for l in raw.splitlines() if "/" in l]
-        parsed = []
-
-        for l in lines:
-            p = l.split(",")
-            try:
-                parsed.append((p[0], float(p[1])))
-            except:
-                continue
-
-        latest = parsed[-1]
-        prev = parsed[-2]
-
-        return {
-            "date": latest[0],
-            "value": latest[1],
-            "prev": prev[1]
-        }
-    except:
-        return None
-
-# ================= MAIN =================
 
 def main():
     countries = {}
     errors = {}
 
-    # ===== ECB DATA (EU DAILY) =====
-    for slug, code in ECB_COUNTRIES.items():
+    for slug, info in SERIES.items():
         try:
-            y10 = fetch_ecb(code, "10Y")
-            y2 = fetch_ecb(code, "2Y")
+            obs = fetch_latest_observation(info["series_id"])
 
-            if not y10 or not y2:
-                raise RuntimeError("ECB failed")
+            # 🔥 BUGFIX (nur das hier ist neu)
+            used_frequency = info["frequency_hint"]
 
-            spread = y10["value"] - y2["value"]
+            if slug == "united_kingdom":
+                if obs["date"] < datetime.now().strftime("%Y-%m-01"):
+                    used_frequency = info.get("fallback_frequency_hint", "Monthly")
 
             countries[slug] = {
-                "label": slug.replace("_", " ").title(),
-                "source": "ecb",
-                "date": y10["date"],
-                "yields": {
-                    "10Y": y10["value"],
-                    "2Y": y2["value"],
-                    "spread": spread
-                },
-                "change": y10["value"] - y10["prev"]
+                "label": info["label"],
+                "seriesId": info["series_id"],
+                "source": "fred",
+                "frequency": used_frequency,
+                "date": obs["date"],
+                "value": obs["value"],
+                "previousDate": obs["previousDate"],
+                "previousValue": obs["previousValue"],
+                "change": obs["change"]
             }
+
+            print(f"Updated {info['label']}: {obs['value']} ({obs['date']})")
 
         except Exception as e:
             errors[slug] = str(e)
-
-    # ===== UK (BOE PRIMARY) =====
-    try:
-        uk = fetch_boe()
-
-        if uk:
-            countries["united_kingdom"] = {
-                "label": "United Kingdom",
-                "source": "boe",
-                "date": uk["date"],
-                "yields": {
-                    "10Y": uk["value"]
-                },
-                "change": uk["value"] - uk["prev"]
-            }
-        else:
-            raise RuntimeError("BoE failed")
-
-    except:
-        try:
-            fred = fetch_fred(FRED_SERIES["united_kingdom"])
-            countries["united_kingdom"] = {
-                "label": "United Kingdom",
-                "source": "fred",
-                "date": fred["date"],
-                "yields": {
-                    "10Y": fred["value"]
-                },
-                "change": fred["value"] - fred["prev"]
-            }
-        except Exception as e:
-            errors["united_kingdom"] = str(e)
-
-    # ===== FRED OTHER COUNTRIES =====
-    for slug, series in FRED_SERIES.items():
-        if slug == "united_kingdom":
-            continue
-
-        try:
-            f = fetch_fred(series)
-
-            countries[slug] = {
-                "label": slug.replace("_", " ").title(),
-                "source": "fred",
-                "date": f["date"],
-                "yields": {
-                    "10Y": f["value"]
-                },
-                "change": f["value"] - f["prev"]
-            }
-
-        except Exception as e:
-            errors[slug] = str(e)
-
-    # ===== OUTPUT =====
+            print(f"Error updating {info['label']}: {e}")
 
     output = {
         "meta": {
-            "title": "BondStats Global Yield Engine",
-            "sources": ["ECB", "BoE", "FRED"],
-            "lastUpdated": datetime.now(timezone.utc).strftime("%Y-%m-%d")
+            "title": "BondStats Global Yields",
+            "source": "FRED",
+            "lastUpdated": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+            "note": "Some country series update monthly depending on source frequency."
         },
         "countries": countries,
         "errors": errors
     }
 
-    with open(OUTPUT_FILE, "w") as f:
-        json.dump(output, f, indent=2)
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+        json.dump(output, f, indent=2, ensure_ascii=False)
 
-    print("JSON updated successfully")
+    print("global_yields.json updated successfully.")
+    print(f"Countries updated: {len(countries)}")
+    if errors:
+        print(f"Countries with errors: {len(errors)}")
 
 if __name__ == "__main__":
     main()
