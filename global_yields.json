@@ -24,16 +24,6 @@
       "previousValue": 3.1121828868,
       "change": -0.023366764900000003
     },
-    "united_kingdom": {
-      "label": "United Kingdom",
-      "source": "boe",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 4.7007,
-      "previousDate": "2026-02-01",
-      "previousValue": 4.4324,
-      "change": 0.2683
-    },
     "canada": {
       "label": "Canada",
       "source": "boc",
@@ -53,7 +43,289 @@
       "previousDate": "2026-02-01",
       "previousValue": 4.758,
       "change": 0.14200000000000035
+    },
+    "germany": {
+      "label": "Germany",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 2.9052380952,
+      "previousDate": "2026-02-01",
+      "previousValue": 2.745,
+      "change": 0.16023809519999999
+    },
+    "france": {
+      "label": "France",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.4,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.53,
+      "change": -0.1299999999999999
+    },
+    "italy": {
+      "label": "Italy",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.388,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.492,
+      "change": -0.10400000000000009
+    },
+    "spain": {
+      "label": "Spain",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 3.37814285714286,
+      "previousDate": "2026-02-01",
+      "previousValue": 3.1826,
+      "change": 0.1955428571428599
+    },
+    "netherlands": {
+      "label": "Netherlands",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 2.849,
+      "previousDate": "2026-01-01",
+      "previousValue": 2.94,
+      "change": -0.09099999999999975
+    },
+    "switzerland": {
+      "label": "Switzerland",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 0.4,
+      "previousDate": "2026-02-01",
+      "previousValue": 0.25,
+      "change": 0.15000000000000002
+    },
+    "sweden": {
+      "label": "Sweden",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 2.76,
+      "previousDate": "2026-02-01",
+      "previousValue": 2.64,
+      "change": 0.11999999999999966
+    },
+    "belgium": {
+      "label": "Belgium",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 3.51,
+      "previousDate": "2026-02-01",
+      "previousValue": 3.3,
+      "change": 0.20999999999999996
+    },
+    "austria": {
+      "label": "Austria",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.0654,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.0763,
+      "change": -0.01089999999999991
+    },
+    "portugal": {
+      "label": "Portugal",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 3.37,
+      "previousDate": "2026-02-01",
+      "previousValue": 3.13,
+      "change": 0.2400000000000002
+    },
+    "finland": {
+      "label": "Finland",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 3.322319091,
+      "previousDate": "2026-02-01",
+      "previousValue": 3.160172,
+      "change": 0.16214709099999958
+    },
+    "ireland": {
+      "label": "Ireland",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.0339,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.0611,
+      "change": -0.027200000000000113
+    },
+    "denmark": {
+      "label": "Denmark",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 2.631,
+      "previousDate": "2026-01-01",
+      "previousValue": 2.728,
+      "change": -0.09700000000000042
+    },
+    "norway": {
+      "label": "Norway",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 4.24533333333333,
+      "previousDate": "2026-02-01",
+      "previousValue": 4.1625,
+      "change": 0.08283333333333065
+    },
+    "india": {
+      "label": "India",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 6.78333333333333,
+      "previousDate": "2026-01-01",
+      "previousValue": 6.732,
+      "change": 0.051333333333329456
+    },
+    "south_korea": {
+      "label": "South Korea",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 3.728,
+      "previousDate": "2026-02-01",
+      "previousValue": 3.612,
+      "change": 0.1160000000000001
+    },
+    "new_zealand": {
+      "label": "New Zealand",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 4.64,
+      "previousDate": "2026-02-01",
+      "previousValue": 4.45,
+      "change": 0.1899999999999995
+    },
+    "greece": {
+      "label": "Greece",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 3.71,
+      "previousDate": "2026-02-01",
+      "previousValue": 3.39,
+      "change": 0.31999999999999984
+    },
+    "israel": {
+      "label": "Israel",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.89,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.94,
+      "change": -0.04999999999999982
+    },
+    "mexico": {
+      "label": "Mexico",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 8.74,
+      "previousDate": "2026-01-01",
+      "previousValue": 9.21,
+      "change": -0.47000000000000064
+    },
+    "poland": {
+      "label": "Poland",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 5.58,
+      "previousDate": "2026-02-01",
+      "previousValue": 4.99,
+      "change": 0.5899999999999999
+    },
+    "czech_republic": {
+      "label": "Czech Republic",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 4.37052161674474,
+      "previousDate": "2026-01-01",
+      "previousValue": 4.45986916094462,
+      "change": -0.08934754419987989
+    },
+    "hungary": {
+      "label": "Hungary",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 7.13,
+      "previousDate": "2026-02-01",
+      "previousValue": 6.48,
+      "change": 0.6499999999999995
+    },
+    "slovakia": {
+      "label": "Slovakia",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.27305,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.41005,
+      "change": -0.137
+    },
+    "slovenia": {
+      "label": "Slovenia",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.09,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.19,
+      "change": -0.10000000000000009
+    },
+    "lithuania": {
+      "label": "Lithuania",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 2.88,
+      "previousDate": "2026-01-01",
+      "previousValue": 2.88,
+      "change": 0.0
+    },
+    "chile": {
+      "label": "Chile",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 5.55176470588235,
+      "previousDate": "2026-02-01",
+      "previousValue": 5.3,
+      "change": 0.25176470588235045
+    },
+    "south_africa": {
+      "label": "South Africa",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-03-01",
+      "value": 9.05,
+      "previousDate": "2026-02-01",
+      "previousValue": 8.257,
+      "change": 0.793000000000001
     }
   },
-  "errors": {}
+  "errors": {
+    "united_kingdom": "HTTP Error 500: Internal Server Error"
+  }
 }
