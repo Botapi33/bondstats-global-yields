@@ -30,7 +30,18 @@ SERIES = {
         "series_id": "IRLTLT01GBM156N",
         "frequency_hint": "Daily",
         "primary_source": "boe",
-        "fallback_source": "fred"
+        "fallback_source": "fred",
+        "fallback_series_id": "IRLTLT01GBM156N"
+    },
+
+    # ✅ CANADA UPGRADE (BoC Primary + FRED fallback)
+    "canada": {
+        "label": "Canada",
+        "series_id": "V39055",
+        "frequency_hint": "Daily",
+        "primary_source": "boc",
+        "fallback_source": "fred",
+        "fallback_series_id": "IRLTLT01CAM156N"
     },
 
     # FRED Countries (unchanged)
@@ -39,7 +50,6 @@ SERIES = {
     "italy": {"label": "Italy", "series_id": "IRLTLT01ITM156N", "frequency_hint": "Monthly"},
     "spain": {"label": "Spain", "series_id": "IRLTLT01ESM156N", "frequency_hint": "Monthly"},
     "netherlands": {"label": "Netherlands", "series_id": "IRLTLT01NLM156N", "frequency_hint": "Monthly"},
-    "canada": {"label": "Canada", "series_id": "IRLTLT01CAM156N", "frequency_hint": "Monthly"},
     "australia": {"label": "Australia", "series_id": "IRLTLT01AUM156N", "frequency_hint": "Monthly"},
     "switzerland": {"label": "Switzerland", "series_id": "IRLTLT01CHM156N", "frequency_hint": "Monthly"},
     "sweden": {"label": "Sweden", "series_id": "IRLTLT01SEM156N", "frequency_hint": "Monthly"},
@@ -102,7 +112,7 @@ def fetch_fred(series_id):
         "change": safe_float(latest["value"]) - safe_float(prev["value"]) if prev else None
     }
 
-# ---------------- ECB FIX ----------------
+# ---------------- ECB ----------------
 
 def fetch_ecb():
     url = "https://data-api.ecb.europa.eu/service/data/YC/B.U2.EUR.4F.G_N_A.SV_C_YM.SR_10Y?format=jsondata"
@@ -126,7 +136,7 @@ def fetch_ecb():
         "change": float(obs[latest_key][0]) - float(obs[prev_key][0])
     }
 
-# ---------------- BOE FIX ----------------
+# ---------------- BOE ----------------
 
 def fetch_boe():
     try:
@@ -157,6 +167,48 @@ def fetch_boe():
     except:
         return None
 
+# ---------------- BOC (NEW) ----------------
+
+def fetch_boc(series_id):
+    try:
+        url = f"https://www.bankofcanada.ca/valet/observations?seriesName={series_id}&recent=2"
+
+        data = json.loads(urlopen(Request(url)).read().decode("utf-8"))
+        obs = data.get("observations", [])
+
+        parsed = []
+
+        for o in obs:
+            date = o.get("d")
+
+            val = None
+            if isinstance(o.get(series_id), dict):
+                raw = o[series_id].get("v")
+                if raw not in (None, "", "null"):
+                    val = float(raw)
+
+            if date and val is not None:
+                parsed.append((date, val))
+
+        if len(parsed) == 0:
+            return None
+
+        parsed.sort(key=lambda x: x[0])
+
+        latest = parsed[-1]
+        prev = parsed[-2] if len(parsed) > 1 else None
+
+        return {
+            "date": latest[0],
+            "value": latest[1],
+            "previousDate": prev[0] if prev else None,
+            "previousValue": prev[1] if prev else None,
+            "change": latest[1] - prev[1] if prev else None
+        }
+
+    except:
+        return None
+
 # ---------------- FETCH ROUTER ----------------
 
 def fetch_data(info):
@@ -173,9 +225,21 @@ def fetch_data(info):
             if data:
                 return data, "ecb"
 
-        if info.get("series_id"):
+        if primary == "boc":
+            data = fetch_boc(info.get("series_id"))
+            if data:
+                return data, "boc"
+
+        if info.get("series_id") and primary == "fred":
             return fetch_fred(info["series_id"]), "fred"
 
+    except:
+        pass
+
+    # fallback
+    try:
+        if info.get("fallback_source") == "fred":
+            return fetch_fred(info.get("fallback_series_id")), "fred"
     except:
         pass
 
@@ -212,7 +276,7 @@ def main():
     output = {
         "meta": {
             "title": "BondStats Global Yields",
-            "source": "FRED + ECB + BoE",
+            "source": "FRED + ECB + BoE + BoC",
             "lastUpdated": datetime.now(timezone.utc).strftime("%Y-%m-%d")
         },
         "countries": countries,
