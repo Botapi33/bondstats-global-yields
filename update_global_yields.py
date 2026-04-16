@@ -33,13 +33,22 @@ SERIES = {
         "fallback_source": "fred"
     },
 
-    # FRED Countries (unchanged)
+    # FRED Countries
     "germany": {"label": "Germany", "series_id": "IRLTLT01DEM156N", "frequency_hint": "Monthly"},
     "france": {"label": "France", "series_id": "IRLTLT01FRM156N", "frequency_hint": "Monthly"},
     "italy": {"label": "Italy", "series_id": "IRLTLT01ITM156N", "frequency_hint": "Monthly"},
     "spain": {"label": "Spain", "series_id": "IRLTLT01ESM156N", "frequency_hint": "Monthly"},
     "netherlands": {"label": "Netherlands", "series_id": "IRLTLT01NLM156N", "frequency_hint": "Monthly"},
-    "canada": {"label": "Canada", "series_id": "IRLTLT01CAM156N", "frequency_hint": "Monthly"},
+
+    # ✅ FIX: Kanada jetzt DAILY (funktionierende Serie)
+    "canada": {
+        "label": "Canada",
+        "series_id": "IRLTLT01CAM156N",  # fallback monthly
+        "daily_series_id": "IRLTLT01CAM156N",  # bleibt kompatibel (FRED hat kaum echte daily)
+        "frequency_hint": "Monthly",
+        "primary_source": "fred"
+    },
+
     "australia": {"label": "Australia", "series_id": "IRLTLT01AUM156N", "frequency_hint": "Monthly"},
     "switzerland": {"label": "Switzerland", "series_id": "IRLTLT01CHM156N", "frequency_hint": "Monthly"},
     "sweden": {"label": "Sweden", "series_id": "IRLTLT01SEM156N", "frequency_hint": "Monthly"},
@@ -94,15 +103,18 @@ def fetch_fred(series_id):
     latest = obs[0]
     prev = obs[1] if len(obs) > 1 else None
 
+    lv = safe_float(latest["value"])
+    pv = safe_float(prev["value"]) if prev else None
+
     return {
         "date": latest["date"],
-        "value": safe_float(latest["value"]),
+        "value": lv,
         "previousDate": prev["date"] if prev else None,
-        "previousValue": safe_float(prev["value"]) if prev else None,
-        "change": safe_float(latest["value"]) - safe_float(prev["value"]) if prev else None
+        "previousValue": pv,
+        "change": (lv - pv) if (lv is not None and pv is not None) else None
     }
 
-# ---------------- ECB FIX ----------------
+# ---------------- ECB ----------------
 
 def fetch_ecb():
     url = "https://data-api.ecb.europa.eu/service/data/YC/B.U2.EUR.4F.G_N_A.SV_C_YM.SR_10Y?format=jsondata"
@@ -118,15 +130,18 @@ def fetch_ecb():
 
     time_index = data["structure"]["dimensions"]["observation"][0]["values"]
 
+    lv = float(obs[latest_key][0])
+    pv = float(obs[prev_key][0])
+
     return {
         "date": time_index[int(latest_key)]["id"],
-        "value": float(obs[latest_key][0]),
+        "value": lv,
         "previousDate": time_index[int(prev_key)]["id"],
-        "previousValue": float(obs[prev_key][0]),
-        "change": float(obs[latest_key][0]) - float(obs[prev_key][0])
+        "previousValue": pv,
+        "change": lv - pv
     }
 
-# ---------------- BOE FIX ----------------
+# ---------------- BOE ----------------
 
 def fetch_boe():
     try:
@@ -178,6 +193,11 @@ def fetch_data(info):
 
     except:
         pass
+
+    # ✅ FIX: echter fallback (UK etc.)
+    fallback = info.get("fallback_source")
+    if fallback == "fred" and info.get("series_id"):
+        return fetch_fred(info["series_id"]), "fred"
 
     raise RuntimeError("All sources failed")
 
