@@ -1,9 +1,8 @@
 {
   "meta": {
     "title": "BondStats Global Yields",
-    "source": "Mixed (FRED + BoE + ECB)",
-    "lastUpdated": "2026-04-16",
-    "note": "Some country series update monthly depending on source frequency. UK uses BoE with FRED fallback. Euro Area uses ECB."
+    "source": "FRED + ECB + BoE",
+    "lastUpdated": "2026-04-16"
   },
   "countries": {
     "united_states": {
@@ -28,6 +27,17 @@
       "previousValue": 3.1121828868,
       "change": -0.023366764900000003
     },
+    "united_kingdom": {
+      "label": "United Kingdom",
+      "seriesId": "IRLTLT01GBM156N",
+      "source": "fred",
+      "frequency": "Daily",
+      "date": "2026-03-01",
+      "value": 4.7007,
+      "previousDate": "2026-02-01",
+      "previousValue": 4.4324,
+      "change": 0.2683
+    },
     "germany": {
       "label": "Germany",
       "seriesId": "IRLTLT01DEM156N",
@@ -38,28 +48,6 @@
       "previousDate": "2026-02-01",
       "previousValue": 2.745,
       "change": 0.16023809519999999
-    },
-    "united_kingdom": {
-      "label": "United Kingdom",
-      "seriesId": "IRLTLT01GBM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 4.7007,
-      "previousDate": "2026-02-01",
-      "previousValue": 4.4324,
-      "change": 0.2683
-    },
-    "japan": {
-      "label": "Japan",
-      "seriesId": "IRLTLT01JPM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 2.345,
-      "previousDate": "2026-02-01",
-      "previousValue": 2.11,
-      "change": 0.23500000000000032
     },
     "france": {
       "label": "France",
@@ -160,6 +148,17 @@
       "previousValue": 3.3,
       "change": 0.20999999999999996
     },
+    "austria": {
+      "label": "Austria",
+      "seriesId": "IRLTLT01ATM156N",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-02-01",
+      "value": 3.0654,
+      "previousDate": "2026-01-01",
+      "previousValue": 3.0763,
+      "change": -0.01089999999999991
+    },
     "portugal": {
       "label": "Portugal",
       "seriesId": "IRLTLT01PTM156N",
@@ -247,39 +246,6 @@
       "previousDate": "2026-02-01",
       "previousValue": 4.45,
       "change": 0.1899999999999995
-    },
-    "greece": {
-      "label": "Greece",
-      "seriesId": "IRLTLT01GRM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 3.71,
-      "previousDate": "2026-02-01",
-      "previousValue": 3.39,
-      "change": 0.31999999999999984
-    },
-    "israel": {
-      "label": "Israel",
-      "seriesId": "IRLTLT01ILM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 3.89,
-      "previousDate": "2026-01-01",
-      "previousValue": 3.94,
-      "change": -0.04999999999999982
-    },
-    "mexico": {
-      "label": "Mexico",
-      "seriesId": "IRLTLT01MXM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 8.74,
-      "previousDate": "2026-01-01",
-      "previousValue": 9.21,
-      "change": -0.47000000000000064
     },
     "poland": {
       "label": "Poland",
@@ -371,6 +337,8 @@
     }
   },
   "errors": {
-    "austria": "Primary failed (fred): HTTP Error 500: Internal Server Error"
+    "greece": "All sources failed",
+    "israel": "All sources failed",
+    "mexico": "All sources failed"
   }
 }
