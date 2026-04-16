@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "BondStats Global Yields",
-    "source": "FRED + BoE + ECB",
+    "source": "FRED + ECB + BoE",
     "lastUpdated": "2026-04-16"
   },
   "countries": {
@@ -21,9 +21,9 @@
       "seriesId": null,
       "source": "ecb",
       "frequency": "Daily",
-      "date": "5522",
+      "date": "2026-04-15",
       "value": 3.0888161219,
-      "previousDate": "5521",
+      "previousDate": "2026-04-14",
       "previousValue": 3.1121828868,
       "change": -0.023366764900000003
     },
@@ -180,17 +180,6 @@
       "previousDate": "2026-02-01",
       "previousValue": 3.160172,
       "change": 0.16214709099999958
-    },
-    "ireland": {
-      "label": "Ireland",
-      "seriesId": "IRLTLT01IEM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-02-01",
-      "value": 3.0339,
-      "previousDate": "2026-01-01",
-      "previousValue": 3.0611,
-      "change": -0.027200000000000113
     },
     "denmark": {
       "label": "Denmark",
@@ -369,5 +358,7 @@
       "change": 0.793000000000001
     }
   },
-  "errors": {}
+  "errors": {
+    "ireland": "All sources failed"
+  }
 }
