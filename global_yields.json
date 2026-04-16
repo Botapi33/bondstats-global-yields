@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "BondStats Global Yields",
-    "source": "FRED + ECB + BoE",
+    "source": "FRED + ECB + BoE + BoC",
     "lastUpdated": "2026-04-16"
   },
   "countries": {
@@ -37,6 +37,17 @@
       "previousDate": "2026-02-01",
       "previousValue": 4.4324,
       "change": 0.2683
+    },
+    "canada": {
+      "label": "Canada",
+      "seriesId": "V39055",
+      "source": "fred",
+      "frequency": "Daily",
+      "date": "2026-03-01",
+      "value": 3.44,
+      "previousDate": "2026-02-01",
+      "previousValue": 3.28842105263158,
+      "change": 0.15157894736841993
     },
     "germany": {
       "label": "Germany",
@@ -92,17 +103,6 @@
       "previousDate": "2026-01-01",
       "previousValue": 2.94,
       "change": -0.09099999999999975
-    },
-    "canada": {
-      "label": "Canada",
-      "seriesId": "IRLTLT01CAM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 3.44,
-      "previousDate": "2026-02-01",
-      "previousValue": 3.28842105263158,
-      "change": 0.15157894736841993
     },
     "australia": {
       "label": "Australia",
