@@ -2,7 +2,7 @@ import json
 import os
 from datetime import datetime, timezone
 from urllib.parse import urlencode
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 
 API_KEY = os.environ.get("FRED_API_KEY")
 if not API_KEY:
@@ -11,7 +11,6 @@ if not API_KEY:
 OUTPUT_FILE = "global_yields.json"
 
 SERIES = {
-    # Existing countries - unchanged
     "united_states": {
         "label": "United States",
         "series_id": "DGS10",
@@ -25,7 +24,8 @@ SERIES = {
     "united_kingdom": {
         "label": "United Kingdom",
         "series_id": "IRLTLT01GBM156N",
-        "frequency_hint": "Monthly"
+        "frequency_hint": "Daily",
+        "source": "boe"
     },
     "japan": {
         "label": "Japan",
@@ -102,8 +102,6 @@ SERIES = {
         "series_id": "IRLTLT01DKM156N",
         "frequency_hint": "Monthly"
     },
-
-    # New countries added from Norway onward
     "norway": {
         "label": "Norway",
         "series_id": "IRLTLT01NOM156N",
@@ -181,7 +179,7 @@ SERIES = {
     }
 }
 
-def fetch_latest_observation(series_id: str):
+def fetch_latest_fred_observation(series_id: str):
     params = urlencode({
         "series_id": series_id,
         "api_key": API_KEY,
@@ -215,16 +213,61 @@ def fetch_latest_observation(series_id: str):
         "change": change
     }
 
+def fetch_boe_10y_observation():
+    url = "https://www.bankofengland.co.uk/boeapps/database/FromShowColumns.asp?csv.x=yes&Datefrom=01/Jan/2020&Dateto=now&SeriesCodes=IUMAJNB&UsingCodes=Y&VPD=Y"
+
+    req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    with urlopen(req) as response:
+        raw = response.read().decode("utf-8", errors="ignore")
+
+    lines = [line.strip() for line in raw.splitlines() if line.strip()]
+    data_lines = [line for line in lines if "/" in line and "," in line]
+
+    parsed = []
+    for line in data_lines:
+        parts = [p.strip().strip('"') for p in line.split(",")]
+        if len(parts) >= 2:
+            try:
+                parsed.append((parts[0], float(parts[1])))
+            except:
+                continue
+
+    if not parsed:
+        raise RuntimeError("No BoE data")
+
+    latest = parsed[-1]
+    previous = parsed[-2] if len(parsed) > 1 else None
+
+    return {
+        "date": latest[0],
+        "value": latest[1],
+        "previousDate": previous[0] if previous else None,
+        "previousValue": previous[1] if previous else None,
+        "change": (latest[1] - previous[1]) if previous else None
+    }
+
+def fetch_observation(info):
+    source = info.get("source", "fred")
+
+    if source == "fred":
+        return fetch_latest_fred_observation(info["series_id"])
+    elif source == "boe":
+        return fetch_boe_10y_observation()
+    else:
+        raise RuntimeError(f"Unknown source: {source}")
+
 def main():
     countries = {}
     errors = {}
 
     for slug, info in SERIES.items():
         try:
-            obs = fetch_latest_observation(info["series_id"])
+            obs = fetch_observation(info)
+
             countries[slug] = {
                 "label": info["label"],
                 "seriesId": info["series_id"],
+                "source": info.get("source", "fred"),
                 "frequency": info["frequency_hint"],
                 "date": obs["date"],
                 "value": obs["value"],
@@ -232,7 +275,9 @@ def main():
                 "previousValue": obs["previousValue"],
                 "change": obs["change"]
             }
+
             print(f"Updated {info['label']}: {obs['value']} ({obs['date']})")
+
         except Exception as e:
             errors[slug] = str(e)
             print(f"Error updating {info['label']}: {e}")
@@ -240,7 +285,7 @@ def main():
     output = {
         "meta": {
             "title": "BondStats Global Yields",
-            "source": "FRED",
+            "source": "FRED + BoE",
             "lastUpdated": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
             "note": "Some country series update monthly depending on source frequency."
         },
@@ -252,9 +297,6 @@ def main():
         json.dump(output, f, indent=2, ensure_ascii=False)
 
     print("global_yields.json updated successfully.")
-    print(f"Countries updated: {len(countries)}")
-    if errors:
-        print(f"Countries with errors: {len(errors)}")
 
 if __name__ == "__main__":
     main()
