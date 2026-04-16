@@ -30,12 +30,13 @@ SERIES = {
         "primary_source": "fred"
     },
     "united_kingdom": {
-        "label": "United Kingdom",
-        "series_id": "IRLTLT01GBM156N",
-        "frequency_hint": "Daily",
-        "fallback_frequency_hint": "Monthly",
-        "primary_source": "boe",
-        "fallback_source": "fred"
+    "label": "United Kingdom",
+    "series_id": "IRLTLT01GBM156N",
+    "frequency_hint": "Daily",
+    "fallback_frequency_hint": "Monthly",
+    "primary_source": "boe",
+    "fallback_source": "fred"
+},
     },
     "japan": {
         "label": "Japan",
@@ -393,7 +394,7 @@ def main():
 
     for slug, info in SERIES.items():
         try:
-            obs, source_used = fetch_observation(info)
+obs, source_used = fetch_data(info)
 
             used_frequency = info["frequency_hint"]
             if source_used == "fred" and info.get("primary_source") != "fred":
