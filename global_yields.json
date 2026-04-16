@@ -1,9 +1,8 @@
 {
   "meta": {
     "title": "BondStats Global Yields",
-    "source": "FRED + BoE",
-    "lastUpdated": "2026-04-16",
-    "note": "Some country series update monthly depending on source frequency."
+    "source": "FRED + BoE + ECB",
+    "lastUpdated": "2026-04-16"
   },
   "countries": {
     "united_states": {
@@ -17,6 +16,28 @@
       "previousValue": 4.3,
       "change": -0.040000000000000036
     },
+    "euro_area": {
+      "label": "Euro Area",
+      "seriesId": null,
+      "source": "ecb",
+      "frequency": "Daily",
+      "date": "5522",
+      "value": 3.0888161219,
+      "previousDate": "5521",
+      "previousValue": 3.1121828868,
+      "change": -0.023366764900000003
+    },
+    "united_kingdom": {
+      "label": "United Kingdom",
+      "seriesId": "IRLTLT01GBM156N",
+      "source": "fred",
+      "frequency": "Daily",
+      "date": "2026-03-01",
+      "value": 4.7007,
+      "previousDate": "2026-02-01",
+      "previousValue": 4.4324,
+      "change": 0.2683
+    },
     "germany": {
       "label": "Germany",
       "seriesId": "IRLTLT01DEM156N",
@@ -27,17 +48,6 @@
       "previousDate": "2026-02-01",
       "previousValue": 2.745,
       "change": 0.16023809519999999
-    },
-    "japan": {
-      "label": "Japan",
-      "seriesId": "IRLTLT01JPM156N",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 2.345,
-      "previousDate": "2026-02-01",
-      "previousValue": 2.11,
-      "change": 0.23500000000000032
     },
     "france": {
       "label": "France",
@@ -359,7 +369,5 @@
       "change": 0.793000000000001
     }
   },
-  "errors": {
-    "united_kingdom": "No BoE data"
-  }
+  "errors": {}
 }
