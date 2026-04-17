@@ -6,7 +6,7 @@ from urllib.request import urlopen, Request
 
 API_KEY = os.environ.get("FRED_API_KEY")
 if not API_KEY:
-    raise RuntimeError("Missing FRED_API_KEY environment variable.")
+    raise RuntimeError("Missing FRED_API_KEY")
 
 OUTPUT_FILE = "global_yields.json"
 TIMEOUT = 10
@@ -24,7 +24,7 @@ def fetch_text(url):
     with urlopen(req, timeout=TIMEOUT) as r:
         return r.read().decode("utf-8")
 
-# ---------------- DATE ----------------
+# ---------------- UTILS ----------------
 
 def parse_date(date_str):
     for fmt in ("%Y-%m-%d", "%d/%m/%Y"):
@@ -59,45 +59,37 @@ def r(v):
 
 SERIES = {
     "united_states": {"label":"United States","series_id":"DGS10","primary_source":"fred","frequency_hint":"Daily"},
-    "euro_area": {"label":"Euro Area","primary_source":"ecb"},
-    "united_kingdom": {"label":"United Kingdom","primary_source":"boe","fallback_series_id":"IRLTLT01GBM156N"},
-    "canada": {"label":"Canada","primary_source":"boc","series_id":"V39055","fallback_series_id":"IRLTLT01CAM156N"},
-    "australia": {"label":"Australia","primary_source":"rba","series_id":"F2","fallback_series_id":"IRLTLT01AUM156N"},
-    "sweden": {"label":"Sweden","primary_source":"riksbank","series_id":"SEK_GOVT_BOND_10Y","fallback_series_id":"IRLTLT01SEM156N"},
-
     "germany":{"label":"Germany","series_id":"IRLTLT01DEM156N","primary_source":"fred"},
     "france":{"label":"France","series_id":"IRLTLT01FRM156N","primary_source":"fred"},
     "italy":{"label":"Italy","series_id":"IRLTLT01ITM156N","primary_source":"fred"},
     "spain":{"label":"Spain","series_id":"IRLTLT01ESM156N","primary_source":"fred"},
     "netherlands":{"label":"Netherlands","series_id":"IRLTLT01NLM156N","primary_source":"fred"},
     "switzerland":{"label":"Switzerland","series_id":"IRLTLT01CHM156N","primary_source":"fred"},
-    "sweden_fred":{"label":"Sweden (OECD)","series_id":"IRLTLT01SEM156N","primary_source":"fred"},
-    "belgium":{"label":"Belgium","series_id":"IRLTLT01BEM156N","primary_source":"fred"},
-    "austria":{"label":"Austria","series_id":"IRLTLT01ATM156N","primary_source":"fred"},
-    "portugal":{"label":"Portugal","series_id":"IRLTLT01PTM156N","primary_source":"fred"},
-    "finland":{"label":"Finland","series_id":"IRLTLT01FIM156N","primary_source":"fred"},
-    "ireland":{"label":"Ireland","series_id":"IRLTLT01IEM156N","primary_source":"fred"},
-    "denmark":{"label":"Denmark","series_id":"IRLTLT01DKM156N","primary_source":"fred"},
-    "norway":{"label":"Norway","series_id":"IRLTLT01NOM156N","primary_source":"fred"},
-    "india":{"label":"India","series_id":"INDIRLTLT01STM","primary_source":"fred"},
-    "south_korea":{"label":"South Korea","series_id":"IRLTLT01KRM156N","primary_source":"fred"},
-    "new_zealand":{"label":"New Zealand","series_id":"IRLTLT01NZM156N","primary_source":"fred"},
-    "greece":{"label":"Greece","series_id":"IRLTLT01GRM156N","primary_source":"fred"},
-    "israel":{"label":"Israel","series_id":"IRLTLT01ILM156N","primary_source":"fred"},
-    "mexico":{"label":"Mexico","series_id":"IRLTLT01MXM156N","primary_source":"fred"},
     "poland":{"label":"Poland","series_id":"IRLTLT01PLM156N","primary_source":"fred"},
-    "czech_republic":{"label":"Czech Republic","series_id":"IRLTLT01CZM156N","primary_source":"fred"},
     "hungary":{"label":"Hungary","series_id":"IRLTLT01HUM156N","primary_source":"fred"},
-    "slovakia":{"label":"Slovakia","series_id":"IRLTLT01SKM156N","primary_source":"fred"},
-    "slovenia":{"label":"Slovenia","series_id":"IRLTLT01SIM156N","primary_source":"fred"},
-    "lithuania":{"label":"Lithuania","series_id":"LTUIRLTLT01STM","primary_source":"fred"},
-    "chile":{"label":"Chile","series_id":"IRLTLT01CLM156N","primary_source":"fred"},
     "south_africa":{"label":"South Africa","series_id":"IRLTLT01ZAM156N","primary_source":"fred"}
 }
 
-# ---------------- BIS FETCH ----------------
+# ---------------- FETCHERS ----------------
 
-def fetch_bis_long_rate(country_code):
+def fetch_fred(series_id):
+    url = f"https://api.stlouisfed.org/fred/series/observations?{urlencode({'series_id':series_id,'api_key':API_KEY,'file_type':'json','sort_order':'desc','limit':5})}"
+    data = fetch_json(url)
+
+    obs = [o for o in data["observations"] if o["value"] not in (".","")]
+    latest, prev = obs[0], obs[1]
+
+    return {
+        "date": latest["date"],
+        "value": r(float(latest["value"])),
+        "previousDate": prev["date"],
+        "previousValue": r(float(prev["value"])),
+        "change": r(float(latest["value"]) - float(prev["value"]))
+    }
+
+# ---------------- BIS ----------------
+
+def fetch_bis(country_code):
     try:
         url = f"https://stats.bis.org/api/v1/data/WS_LONG_RATES/D.{country_code}.LONG_TERM.GOVT.YIELD?format=json"
         data = fetch_json(url)
@@ -105,38 +97,34 @@ def fetch_bis_long_rate(country_code):
         obs = data["dataSets"][0]["observations"]
         times = data["structure"]["dimensions"]["observation"][0]["values"]
 
-        if not obs:
-            return None
-
         keys = sorted(obs.keys(), key=lambda x: int(x.split(":")[0]))
 
         last = keys[-1]
-        prev = keys[-2] if len(keys) > 1 else None
+        prev = keys[-2]
 
         val = obs[last][0]
-        prev_val = obs[prev][0] if prev else None
-
-        if val is None:
-            return None
+        prev_val = obs[prev][0]
 
         date_idx = int(last.split(":")[0])
-        prev_idx = int(prev.split(":")[0]) if prev else None
+        prev_idx = int(prev.split(":")[0])
 
         return {
             "date": times[date_idx]["id"],
             "value": r(float(val)),
-            "previousDate": times[prev_idx]["id"] if prev else None,
-            "previousValue": r(float(prev_val)) if prev_val else None,
-            "change": r(float(val) - float(prev_val)) if prev_val else None
+            "previousDate": times[prev_idx]["id"],
+            "previousValue": r(float(prev_val)),
+            "change": r(float(val) - float(prev_val))
         }
 
-    except Exception as e:
-        print(f"BIS error ({country_code}):", e)
+    except:
         return None
 
-# ---------------- FETCHERS (unchanged) ----------------
+# ---------------- ROUTER ----------------
 
-# ... (ALLE deine bestehenden fetch_* Funktionen bleiben exakt gleich)
+def fetch_data(info):
+    if info["primary_source"] == "fred":
+        return fetch_fred(info["series_id"]), "fred", "Daily", False
+    raise RuntimeError("No valid source")
 
 # ---------------- MAIN ----------------
 
@@ -144,9 +132,11 @@ def main():
     countries = {}
     errors = {}
 
+    # NORMAL DATA
     for slug, info in SERIES.items():
         try:
-            obs, source, freq, is_fb = fetch_data(info)
+            obs, source, freq, fb = fetch_data(info)
+
             stale = staleness_days(obs["date"])
             tier = calc_tier(stale, freq)
 
@@ -161,25 +151,22 @@ def main():
                 "change": obs["change"],
                 "stalenessDays": stale,
                 "tier": tier,
-                "isFallback": is_fb
+                "isFallback": fb
             }
 
         except Exception as e:
             errors[slug] = str(e)
 
-    # -------- BIS EXTENSION --------
-
-    BIS_COUNTRIES = {
+    # BIS ADD
+    BIS = {
         "china": "CN",
         "brazil": "BR",
-        "turkey": "TR",
-        "indonesia": "ID",
-        "saudi_arabia": "SA"
+        "turkey": "TR"
     }
 
-    for slug, code in BIS_COUNTRIES.items():
+    for slug, code in BIS.items():
         try:
-            obs = fetch_bis_long_rate(code)
+            obs = fetch_bis(code)
             if not obs:
                 continue
 
@@ -187,7 +174,7 @@ def main():
             tier = calc_tier(stale, "Daily")
 
             countries[slug] = {
-                "label": slug.replace("_", " ").title(),
+                "label": slug.title(),
                 "source": "bis",
                 "frequency": "Daily",
                 "date": obs["date"],
@@ -211,6 +198,7 @@ def main():
         "countries": countries,
         "errors": errors
     }, open(OUTPUT_FILE, "w"), indent=2)
+
 
 if __name__ == "__main__":
     main()
