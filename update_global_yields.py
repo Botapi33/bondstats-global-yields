@@ -27,8 +27,6 @@ def fetch_text(url):
 # ---------------- DATE ----------------
 
 def parse_date(date_str):
-    if not date_str:
-        return None
     for fmt in ("%Y-%m-%d", "%d/%m/%Y"):
         try:
             return datetime.strptime(date_str, fmt)
@@ -100,22 +98,10 @@ SERIES = {
 # ---------------- FETCHERS ----------------
 
 def fetch_fred(series_id):
-    url = (
-        "https://api.stlouisfed.org/fred/series/observations?"
-        + urlencode({
-            "series_id": series_id,
-            "api_key": API_KEY,
-            "file_type": "json",
-            "sort_order": "desc",
-            "limit": 12
-        })
-    )
+    url = f"https://api.stlouisfed.org/fred/series/observations?{urlencode({'series_id':series_id,'api_key':API_KEY,'file_type':'json','sort_order':'desc','limit':12})}"
     data = fetch_json(url)
 
-    obs = [o for o in data["observations"] if o["value"] not in (".", "")]
-    if len(obs) < 2:
-        raise RuntimeError(f"Not enough FRED observations for {series_id}")
-
+    obs = [o for o in data["observations"] if o["value"] not in (".","")]
     latest, prev = obs[0], obs[1]
 
     return {
@@ -131,8 +117,6 @@ def fetch_ecb():
     s = next(iter(data["dataSets"][0]["series"].values()))
     obs = s["observations"]
     keys = sorted(obs.keys(), key=lambda x: int(x))
-    if len(keys) < 2:
-        raise RuntimeError("Not enough ECB observations")
     t = data["structure"]["dimensions"]["observation"][0]["values"]
 
     return {
@@ -146,131 +130,45 @@ def fetch_ecb():
 def fetch_boe():
     try:
         raw = fetch_text("https://api.allorigins.win/raw?url=https://www.bankofengland.co.uk/boeapps/database/FromShowColumns.asp?csv.x=yes&SeriesCodes=IUMAJNB")
-        parsed = []
+        parsed=[]
         for l in raw.splitlines():
             if "/" in l:
-                p = l.split(",")
-                try:
-                    parsed.append((p[0], float(p[1])))
-                except:
-                    pass
-        parsed = [x for x in parsed if parse_date(x[0])]
+                p=l.split(",")
+                try: parsed.append((p[0],float(p[1])))
+                except: pass
         parsed.sort(key=lambda x: parse_date(x[0]))
-        if len(parsed) < 2:
-            return None
         latest, prev = parsed[-1], parsed[-2]
-        return {
-            "date": latest[0],
-            "value": r(latest[1]),
-            "previousDate": prev[0],
-            "previousValue": r(prev[1]),
-            "change": r(latest[1] - prev[1])
-        }
+        return {"date":latest[0],"value":r(latest[1]),"previousDate":prev[0],"previousValue":r(prev[1]),"change":r(latest[1]-prev[1])}
     except:
         return None
 
 def fetch_boc(series_id):
     try:
         data = fetch_json(f"https://www.bankofcanada.ca/valet/observations?seriesName={series_id}&recent=5")
-        parsed = []
-        for o in data["observations"]:
-            series_obj = o.get(series_id)
-            if series_obj and series_obj.get("v") not in (None, ""):
-                parsed.append((o["d"], float(series_obj["v"])))
+        parsed=[(o["d"],float(o[series_id]["v"])) for o in data["observations"] if o.get(series_id)]
         parsed.sort()
-        if len(parsed) < 2:
-            return None
         latest, prev = parsed[-1], parsed[-2]
-        return {
-            "date": latest[0],
-            "value": r(latest[1]),
-            "previousDate": prev[0],
-            "previousValue": r(prev[1]),
-            "change": r(latest[1] - prev[1])
-        }
+        return {"date":latest[0],"value":r(latest[1]),"previousDate":prev[0],"previousValue":r(prev[1]),"change":r(latest[1]-prev[1])}
     except:
         return None
 
 def fetch_rba(series_id):
     try:
         data = fetch_json(f"https://api.rba.gov.au/statistics/timeseries/{series_id}?format=json")
-        parsed = []
-        for o in data["series"]["observations"]:
-            if o.get("value") not in (None, ""):
-                parsed.append((o["date"], float(o["value"])))
+        parsed=[(o["date"],float(o["value"])) for o in data["series"]["observations"] if o["value"]]
         parsed.sort()
-        if len(parsed) < 2:
-            return None
         latest, prev = parsed[-1], parsed[-2]
-        return {
-            "date": latest[0],
-            "value": r(latest[1]),
-            "previousDate": prev[0],
-            "previousValue": r(prev[1]),
-            "change": r(latest[1] - prev[1])
-        }
+        return {"date":latest[0],"value":r(latest[1]),"previousDate":prev[0],"previousValue":r(prev[1]),"change":r(latest[1]-prev[1])}
     except:
         return None
 
 def fetch_riksbank(series_id):
     try:
         data = fetch_json(f"https://api.riksbank.se/swea/v1/Observations/{series_id}")
-        parsed = []
-        for o in data["observations"]:
-            if o.get("value") not in (None, ""):
-                parsed.append((o["date"], float(o["value"])))
+        parsed=[(o["date"],float(o["value"])) for o in data["observations"] if o.get("value")]
         parsed.sort()
-        if len(parsed) < 2:
-            return None
         latest, prev = parsed[-1], parsed[-2]
-        return {
-            "date": latest[0],
-            "value": r(latest[1]),
-            "previousDate": prev[0],
-            "previousValue": r(prev[1]),
-            "change": r(latest[1] - prev[1])
-        }
-    except:
-        return None
-
-# ---------------- BIS FETCHER ----------------
-# Fail-safe optional extension:
-# If BIS changes series keys or is unavailable, China is skipped and everything else stays intact.
-
-def fetch_bis_long_rate(country_code):
-    try:
-        url = f"https://stats.bis.org/api/v1/data/WS_LONG_RATES/D.{country_code}.LONG_TERM.GOVT.YIELD?format=json"
-        data = fetch_json(url)
-
-        obs = data["dataSets"][0]["observations"]
-        times = data["structure"]["dimensions"]["observation"][0]["values"]
-
-        if not obs:
-            return None
-
-        keys = sorted(obs.keys(), key=lambda x: int(x.split(":")[0]))
-        if len(keys) < 2:
-            return None
-
-        last = keys[-1]
-        prev = keys[-2]
-
-        val = obs[last][0]
-        prev_val = obs[prev][0]
-
-        if val is None or prev_val is None:
-            return None
-
-        date_idx = int(last.split(":")[0])
-        prev_idx = int(prev.split(":")[0])
-
-        return {
-            "date": times[date_idx]["id"],
-            "value": r(float(val)),
-            "previousDate": times[prev_idx]["id"],
-            "previousValue": r(float(prev_val)),
-            "change": r(float(val) - float(prev_val))
-        }
+        return {"date":latest[0],"value":r(latest[1]),"previousDate":prev[0],"previousValue":r(prev[1]),"change":r(latest[1]-prev[1])}
     except:
         return None
 
@@ -281,32 +179,32 @@ def fetch_data(info):
 
     # Primary
     if primary == "fred":
-        return fetch_fred(info["series_id"]), "fred", info.get("frequency_hint", "Monthly"), False
+        return fetch_fred(info["series_id"]), "fred", info.get("frequency_hint","Monthly"), False
 
     if primary == "ecb":
         d = fetch_ecb()
         if is_fresh(d["date"]):
-            return d, "ecb", "Daily", False
+            return d,"ecb","Daily",False
 
     if primary == "boe":
         d = fetch_boe()
         if d and is_fresh(d["date"]):
-            return d, "boe", "Daily", False
+            return d,"boe","Daily",False
 
     if primary == "boc":
         d = fetch_boc(info["series_id"])
         if d and is_fresh(d["date"]):
-            return d, "boc", "Daily", False
+            return d,"boc","Daily",False
 
     if primary == "rba":
         d = fetch_rba(info["series_id"])
         if d and is_fresh(d["date"]):
-            return d, "rba", "Daily", False
+            return d,"rba","Daily",False
 
     if primary == "riksbank":
         d = fetch_riksbank(info["series_id"])
         if d and is_fresh(d["date"]):
-            return d, "riksbank", "Daily", False
+            return d,"riksbank","Daily",False
 
     # fallback
     if info.get("fallback_series_id"):
@@ -320,7 +218,6 @@ def main():
     countries = {}
     errors = {}
 
-    # Existing pipeline unchanged
     for slug, info in SERIES.items():
         try:
             obs, source, freq, is_fb = fetch_data(info)
@@ -347,45 +244,14 @@ def main():
             errors[slug] = str(e)
             print(f"ERROR {info['label']}: {e}")
 
-    # -------- BIS EXTENSION: CHINA ONLY, NON-BREAKING --------
-    # Added outside SERIES/router so nothing else changes.
-
-    try:
-        obs = fetch_bis_long_rate("CN")
-        if obs:
-            stale = staleness_days(obs["date"])
-            tier = calc_tier(stale, "Daily")
-
-            countries["china"] = {
-                "label": "China",
-                "source": "bis",
-                "frequency": "Daily",
-                "date": obs["date"],
-                "value": obs["value"],
-                "previousDate": obs["previousDate"],
-                "previousValue": obs["previousValue"],
-                "change": obs["change"],
-                "stalenessDays": stale,
-                "tier": tier,
-                "isFallback": False
-            }
-
-            print(f"China → bis | {tier} | fallback=False")
-        else:
-            print("China → BIS unavailable, skipped")
-    except Exception as e:
-        errors["china"] = str(e)
-        print(f"ERROR China: {e}")
-
-    with open(OUTPUT_FILE, "w") as f:
-        json.dump({
-            "meta": {
-                "title": "BondStats Global Yields",
-                "lastUpdated": datetime.now(timezone.utc).strftime("%Y-%m-%d")
-            },
-            "countries": countries,
-            "errors": errors
-        }, f, indent=2)
+    json.dump({
+        "meta": {
+            "title": "BondStats Global Yields",
+            "lastUpdated": datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        },
+        "countries": countries,
+        "errors": errors
+    }, open(OUTPUT_FILE, "w"), indent=2)
 
 if __name__ == "__main__":
     main()
