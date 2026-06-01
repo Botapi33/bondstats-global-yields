@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "BondStats Global Yields",
-    "lastUpdated": "2026-05-31"
+    "lastUpdated": "2026-06-01"
   },
   "countries": {
     "united_states": {
@@ -13,7 +13,7 @@
       "previousDate": "2026-05-27",
       "previousValue": 4.48,
       "change": -0.03,
-      "stalenessDays": 3,
+      "stalenessDays": 4,
       "tier": "delayed",
       "isFallback": false
     },
@@ -21,11 +21,11 @@
       "label": "Euro Area",
       "source": "ecb",
       "frequency": "Daily",
-      "date": "2026-05-28",
-      "value": 3.0349,
-      "previousDate": "2026-05-27",
-      "previousValue": 3.0265,
-      "change": 0.0084,
+      "date": "2026-05-29",
+      "value": 3.0166,
+      "previousDate": "2026-05-28",
+      "previousValue": 3.0349,
+      "change": -0.0183,
       "stalenessDays": 3,
       "tier": "delayed",
       "isFallback": false
@@ -39,20 +39,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 4.7007,
       "change": 0.12,
-      "stalenessDays": 60,
-      "tier": "monthly",
-      "isFallback": true
-    },
-    "canada": {
-      "label": "Canada",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-05-01",
-      "value": 3.53,
-      "previousDate": "2026-04-01",
-      "previousValue": 3.4833,
-      "change": 0.0467,
-      "stalenessDays": 30,
+      "stalenessDays": 61,
       "tier": "monthly",
       "isFallback": true
     },
@@ -65,7 +52,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 4.926,
       "change": 0.034,
-      "stalenessDays": 60,
+      "stalenessDays": 61,
       "tier": "monthly",
       "isFallback": true
     },
@@ -78,59 +65,59 @@
       "previousDate": "2026-03-01",
       "previousValue": 2.7641,
       "change": 0.0208,
-      "stalenessDays": 60,
+      "stalenessDays": 61,
       "tier": "monthly",
       "isFallback": true
     },
-    "france": {
-      "label": "France",
+    "germany": {
+      "label": "Germany",
       "source": "fred",
       "frequency": "Monthly",
       "date": "2026-04-01",
-      "value": 3.6749,
+      "value": 2.9963,
       "previousDate": "2026-03-01",
-      "previousValue": 3.6011,
-      "change": 0.0738,
-      "stalenessDays": 60,
+      "previousValue": 2.91,
+      "change": 0.0863,
+      "stalenessDays": 61,
       "tier": "monthly",
       "isFallback": false
     },
-    "italy": {
-      "label": "Italy",
+    "netherlands": {
+      "label": "Netherlands",
       "source": "fred",
       "frequency": "Monthly",
       "date": "2026-03-01",
-      "value": 3.733,
+      "value": 3.016,
       "previousDate": "2026-02-01",
-      "previousValue": 3.388,
-      "change": 0.345,
-      "stalenessDays": 91,
+      "previousValue": 2.849,
+      "change": 0.167,
+      "stalenessDays": 92,
       "tier": "monthly",
       "isFallback": false
     },
-    "sweden_fred": {
-      "label": "Sweden (OECD)",
+    "switzerland": {
+      "label": "Switzerland",
       "source": "fred",
       "frequency": "Monthly",
       "date": "2026-04-01",
-      "value": 2.7849,
+      "value": 0.45,
       "previousDate": "2026-03-01",
-      "previousValue": 2.7641,
-      "change": 0.0208,
-      "stalenessDays": 60,
+      "previousValue": 0.4,
+      "change": 0.05,
+      "stalenessDays": 61,
       "tier": "monthly",
       "isFallback": false
     },
-    "belgium": {
-      "label": "Belgium",
+    "portugal": {
+      "label": "Portugal",
       "source": "fred",
       "frequency": "Monthly",
       "date": "2026-04-01",
-      "value": 3.59,
+      "value": 3.43,
       "previousDate": "2026-03-01",
-      "previousValue": 3.51,
-      "change": 0.08,
-      "stalenessDays": 60,
+      "previousValue": 3.37,
+      "change": 0.06,
+      "stalenessDays": 61,
       "tier": "monthly",
       "isFallback": false
     },
@@ -143,20 +130,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 3.3223,
       "change": 0.0577,
-      "stalenessDays": 60,
-      "tier": "monthly",
-      "isFallback": false
-    },
-    "ireland": {
-      "label": "Ireland",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 3.1972,
-      "previousDate": "2026-02-01",
-      "previousValue": 3.0339,
-      "change": 0.1633,
-      "stalenessDays": 91,
+      "stalenessDays": 61,
       "tier": "monthly",
       "isFallback": false
     },
@@ -169,7 +143,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 3.728,
       "change": 0.009,
-      "stalenessDays": 60,
+      "stalenessDays": 61,
       "tier": "monthly",
       "isFallback": false
     },
@@ -182,7 +156,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 4.64,
       "change": 0.04,
-      "stalenessDays": 60,
+      "stalenessDays": 61,
       "tier": "monthly",
       "isFallback": false
     },
@@ -195,7 +169,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 5.58,
       "change": 0.0,
-      "stalenessDays": 60,
+      "stalenessDays": 61,
       "tier": "monthly",
       "isFallback": false
     },
@@ -208,20 +182,7 @@
       "previousDate": "2026-02-01",
       "previousValue": 4.37,
       "change": 0.3536,
-      "stalenessDays": 91,
-      "tier": "monthly",
-      "isFallback": false
-    },
-    "lithuania": {
-      "label": "Lithuania",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-03-01",
-      "value": 2.88,
-      "previousDate": "2026-02-01",
-      "previousValue": 2.88,
-      "change": 0.0,
-      "stalenessDays": 91,
+      "stalenessDays": 92,
       "tier": "monthly",
       "isFallback": false
     },
@@ -234,18 +195,33 @@
       "previousDate": "2026-03-01",
       "previousValue": 5.5556,
       "change": -0.0909,
-      "stalenessDays": 60,
+      "stalenessDays": 61,
+      "tier": "monthly",
+      "isFallback": false
+    },
+    "south_africa": {
+      "label": "South Africa",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-04-01",
+      "value": 8.92,
+      "previousDate": "2026-03-01",
+      "previousValue": 9.05,
+      "change": -0.13,
+      "stalenessDays": 61,
       "tier": "monthly",
       "isFallback": false
     }
   },
   "errors": {
-    "germany": "HTTP Error 429: Too Many Requests",
+    "canada": "HTTP Error 429: Too Many Requests",
+    "france": "HTTP Error 429: Too Many Requests",
+    "italy": "HTTP Error 429: Too Many Requests",
     "spain": "HTTP Error 429: Too Many Requests",
-    "netherlands": "HTTP Error 429: Too Many Requests",
-    "switzerland": "HTTP Error 429: Too Many Requests",
+    "sweden_fred": "HTTP Error 429: Too Many Requests",
+    "belgium": "HTTP Error 429: Too Many Requests",
     "austria": "HTTP Error 429: Too Many Requests",
-    "portugal": "HTTP Error 429: Too Many Requests",
+    "ireland": "HTTP Error 429: Too Many Requests",
     "denmark": "HTTP Error 429: Too Many Requests",
     "norway": "HTTP Error 429: Too Many Requests",
     "india": "HTTP Error 429: Too Many Requests",
@@ -255,6 +231,6 @@
     "hungary": "HTTP Error 429: Too Many Requests",
     "slovakia": "HTTP Error 429: Too Many Requests",
     "slovenia": "HTTP Error 429: Too Many Requests",
-    "south_africa": "HTTP Error 429: Too Many Requests"
+    "lithuania": "HTTP Error 429: Too Many Requests"
   }
 }
