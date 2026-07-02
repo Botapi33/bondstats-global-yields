@@ -1,18 +1,18 @@
 {
   "meta": {
     "title": "BondStats Global Yields",
-    "lastUpdated": "2026-07-01"
+    "lastUpdated": "2026-07-02"
   },
   "countries": {
     "united_states": {
       "label": "United States",
       "source": "fred",
       "frequency": "Daily",
-      "date": "2026-06-29",
-      "value": 4.38,
-      "previousDate": "2026-06-26",
+      "date": "2026-06-30",
+      "value": 4.44,
+      "previousDate": "2026-06-29",
       "previousValue": 4.38,
-      "change": 0.0,
+      "change": 0.06,
       "stalenessDays": 2,
       "tier": "delayed",
       "isFallback": false
@@ -26,8 +26,8 @@
       "previousDate": "2026-06-29",
       "previousValue": 2.9229,
       "change": 0.0016,
-      "stalenessDays": 1,
-      "tier": "daily",
+      "stalenessDays": 2,
+      "tier": "delayed",
       "isFallback": false
     },
     "united_kingdom": {
@@ -39,7 +39,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 4.8207,
       "change": 0.1209,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": true
     },
@@ -52,7 +52,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 3.4833,
       "change": 0.0582,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": true
     },
@@ -65,7 +65,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 4.969,
       "change": 0.021,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": true
     },
@@ -78,7 +78,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 2.7849,
       "change": -0.0404,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": true
     },
@@ -91,7 +91,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 3.001,
       "change": 0.0455,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -104,7 +104,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 3.6749,
       "change": 0.0667,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -117,7 +117,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 3.733,
       "change": 0.085,
-      "stalenessDays": 91,
+      "stalenessDays": 92,
       "tier": "monthly",
       "isFallback": false
     },
@@ -130,7 +130,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 3.4491,
       "change": 0.0332,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -143,7 +143,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 3.027,
       "change": 0.123,
-      "stalenessDays": 91,
+      "stalenessDays": 92,
       "tier": "monthly",
       "isFallback": false
     },
@@ -156,7 +156,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 0.45,
       "change": -0.01,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -169,7 +169,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 2.7849,
       "change": -0.0404,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -182,7 +182,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 3.59,
       "change": 0.01,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -195,7 +195,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 3.2399,
       "change": 0.0634,
-      "stalenessDays": 91,
+      "stalenessDays": 92,
       "tier": "monthly",
       "isFallback": false
     },
@@ -208,7 +208,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 3.43,
       "change": -0.01,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -221,7 +221,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 3.3841,
       "change": 0.0151,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -234,7 +234,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 3.1972,
       "change": 0.0439,
-      "stalenessDays": 91,
+      "stalenessDays": 92,
       "tier": "monthly",
       "isFallback": false
     },
@@ -247,7 +247,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 2.791,
       "change": 0.097,
-      "stalenessDays": 91,
+      "stalenessDays": 92,
       "tier": "monthly",
       "isFallback": false
     },
@@ -260,7 +260,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 4.2864,
       "change": 0.0435,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -273,7 +273,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 7.05,
       "change": -0.03,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -286,7 +286,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 3.737,
       "change": 0.338,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -299,7 +299,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 4.68,
       "change": 0.0,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -312,7 +312,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 3.78,
       "change": -0.03,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -325,7 +325,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 4.06,
       "change": -0.078,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -338,7 +338,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 8.88,
       "change": 0.57,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -351,7 +351,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 5.58,
       "change": 0.16,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -364,7 +364,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 4.7236,
       "change": 0.0147,
-      "stalenessDays": 91,
+      "stalenessDays": 92,
       "tier": "monthly",
       "isFallback": false
     },
@@ -377,7 +377,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 6.27,
       "change": -0.62,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     },
@@ -390,7 +390,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 3.5027,
       "change": 0.0555,
-      "stalenessDays": 91,
+      "stalenessDays": 92,
       "tier": "monthly",
       "isFallback": false
     },
@@ -403,7 +403,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 3.25,
       "change": 0.15,
-      "stalenessDays": 91,
+      "stalenessDays": 92,
       "tier": "monthly",
       "isFallback": false
     },
@@ -416,7 +416,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 2.88,
       "change": 0.0,
-      "stalenessDays": 91,
+      "stalenessDays": 92,
       "tier": "monthly",
       "isFallback": false
     },
@@ -429,7 +429,7 @@
       "previousDate": "2026-03-01",
       "previousValue": 5.5556,
       "change": -0.0909,
-      "stalenessDays": 91,
+      "stalenessDays": 92,
       "tier": "monthly",
       "isFallback": false
     },
@@ -442,7 +442,7 @@
       "previousDate": "2026-04-01",
       "previousValue": 8.9184,
       "change": 0.0766,
-      "stalenessDays": 61,
+      "stalenessDays": 62,
       "tier": "monthly",
       "isFallback": false
     }
