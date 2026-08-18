@@ -32,16 +32,16 @@
     },
     "united_kingdom": {
       "label": "United Kingdom",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-06-01",
-      "value": 4.796,
-      "previousDate": "2026-05-01",
-      "previousValue": 4.9416,
-      "change": -0.1456,
-      "stalenessDays": 78,
-      "tier": "monthly",
-      "isFallback": true
+      "source": "riksbank",
+      "frequency": "Daily",
+      "date": "2026-08-17",
+      "value": 5.07,
+      "previousDate": "2026-08-17",
+      "previousValue": 5.07,
+      "change": 0.0,
+      "stalenessDays": 1,
+      "tier": "daily",
+      "isFallback": false
     },
     "canada": {
       "label": "Canada",
@@ -71,42 +71,42 @@
     },
     "sweden": {
       "label": "Sweden",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-06-01",
-      "value": 2.7807,
-      "previousDate": "2026-05-01",
-      "previousValue": 2.7446,
-      "change": 0.0361,
-      "stalenessDays": 78,
-      "tier": "monthly",
-      "isFallback": true
+      "source": "riksbank",
+      "frequency": "Daily",
+      "date": "2026-08-17",
+      "value": 3.037,
+      "previousDate": "2026-08-17",
+      "previousValue": 3.037,
+      "change": 0.0,
+      "stalenessDays": 1,
+      "tier": "daily",
+      "isFallback": false
     },
     "germany": {
       "label": "Germany",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-06-01",
-      "value": 2.97,
-      "previousDate": "2026-05-01",
-      "previousValue": 3.0465,
-      "change": -0.0765,
-      "stalenessDays": 78,
-      "tier": "monthly",
-      "isFallback": true
+      "source": "riksbank",
+      "frequency": "Daily",
+      "date": "2026-08-17",
+      "value": 3.2223,
+      "previousDate": "2026-08-17",
+      "previousValue": 3.2223,
+      "change": 0.0,
+      "stalenessDays": 1,
+      "tier": "daily",
+      "isFallback": false
     },
     "france": {
       "label": "France",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-06-01",
-      "value": 3.68,
-      "previousDate": "2026-05-01",
-      "previousValue": 3.74,
-      "change": -0.06,
-      "stalenessDays": 78,
-      "tier": "monthly",
-      "isFallback": true
+      "source": "riksbank",
+      "frequency": "Daily",
+      "date": "2026-08-17",
+      "value": 4.0638,
+      "previousDate": "2026-08-17",
+      "previousValue": 4.0638,
+      "change": 0.0,
+      "stalenessDays": 1,
+      "tier": "daily",
+      "isFallback": false
     },
     "italy": {
       "label": "Italy",
@@ -119,7 +119,7 @@
       "change": -0.105,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "spain": {
       "label": "Spain",
@@ -132,20 +132,20 @@
       "change": -0.0611,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "netherlands": {
       "label": "Netherlands",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-06-01",
-      "value": 3.077,
-      "previousDate": "2026-05-01",
-      "previousValue": 3.165,
-      "change": -0.088,
-      "stalenessDays": 78,
-      "tier": "monthly",
-      "isFallback": true
+      "source": "riksbank",
+      "frequency": "Daily",
+      "date": "2026-08-17",
+      "value": 3.3152,
+      "previousDate": "2026-08-17",
+      "previousValue": 3.3152,
+      "change": 0.0,
+      "stalenessDays": 1,
+      "tier": "daily",
+      "isFallback": false
     },
     "switzerland": {
       "label": "Switzerland",
@@ -158,7 +158,7 @@
       "change": -0.13,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "sweden_fred": {
       "label": "Sweden (OECD)",
@@ -171,7 +171,7 @@
       "change": 0.0361,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "belgium": {
       "label": "Belgium",
@@ -184,7 +184,7 @@
       "change": -0.09,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "austria": {
       "label": "Austria",
@@ -197,7 +197,7 @@
       "change": -0.0905,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "portugal": {
       "label": "Portugal",
@@ -210,20 +210,20 @@
       "change": -0.09,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "finland": {
       "label": "Finland",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-06-01",
-      "value": 3.3107,
-      "previousDate": "2026-05-01",
-      "previousValue": 3.3991,
-      "change": -0.0884,
-      "stalenessDays": 78,
-      "tier": "monthly",
-      "isFallback": true
+      "source": "riksbank",
+      "frequency": "Daily",
+      "date": "2026-08-17",
+      "value": 3.5431,
+      "previousDate": "2026-08-17",
+      "previousValue": 3.5431,
+      "change": 0.0,
+      "stalenessDays": 1,
+      "tier": "daily",
+      "isFallback": false
     },
     "ireland": {
       "label": "Ireland",
@@ -236,33 +236,33 @@
       "change": -0.1206,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "denmark": {
       "label": "Denmark",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-06-01",
-      "value": 2.807,
-      "previousDate": "2026-05-01",
-      "previousValue": 2.88,
-      "change": -0.073,
-      "stalenessDays": 78,
-      "tier": "monthly",
-      "isFallback": true
+      "source": "riksbank",
+      "frequency": "Daily",
+      "date": "2026-08-17",
+      "value": 3.0491,
+      "previousDate": "2026-08-17",
+      "previousValue": 3.0491,
+      "change": 0.0,
+      "stalenessDays": 1,
+      "tier": "daily",
+      "isFallback": false
     },
     "norway": {
       "label": "Norway",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-06-01",
-      "value": 4.2027,
-      "previousDate": "2026-05-01",
-      "previousValue": 4.3299,
-      "change": -0.1272,
-      "stalenessDays": 78,
-      "tier": "monthly",
-      "isFallback": true
+      "source": "riksbank",
+      "frequency": "Daily",
+      "date": "2026-08-17",
+      "value": 4.4028,
+      "previousDate": "2026-08-17",
+      "previousValue": 4.4028,
+      "change": 0.0,
+      "stalenessDays": 1,
+      "tier": "daily",
+      "isFallback": false
     },
     "india": {
       "label": "India",
@@ -275,7 +275,7 @@
       "change": -0.13,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "south_korea": {
       "label": "South Korea",
@@ -288,7 +288,7 @@
       "change": 0.106,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "new_zealand": {
       "label": "New Zealand",
@@ -301,7 +301,7 @@
       "change": -0.22,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "greece": {
       "label": "Greece",
@@ -314,7 +314,7 @@
       "change": -0.1,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "israel": {
       "label": "Israel",
@@ -327,7 +327,7 @@
       "change": -0.17,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "mexico": {
       "label": "Mexico",
@@ -340,7 +340,7 @@
       "change": 0.57,
       "stalenessDays": 109,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "poland": {
       "label": "Poland",
@@ -353,7 +353,7 @@
       "change": -0.23,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "czech_republic": {
       "label": "Czech Republic",
@@ -366,7 +366,7 @@
       "change": -0.1852,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "hungary": {
       "label": "Hungary",
@@ -379,7 +379,7 @@
       "change": -0.39,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "slovakia": {
       "label": "Slovakia",
@@ -392,7 +392,7 @@
       "change": 0.1112,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "slovenia": {
       "label": "Slovenia",
@@ -405,7 +405,7 @@
       "change": -0.11,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "lithuania": {
       "label": "Lithuania",
@@ -418,7 +418,7 @@
       "change": 0.0,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "chile": {
       "label": "Chile",
@@ -431,7 +431,7 @@
       "change": -0.05,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     },
     "south_africa": {
       "label": "South Africa",
@@ -444,7 +444,7 @@
       "change": -0.295,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
+      "isFallback": false
     }
   },
   "errors": {}
