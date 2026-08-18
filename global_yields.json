@@ -84,55 +84,16 @@
     },
     "germany": {
       "label": "Germany",
-      "source": "bundesbank",
-      "frequency": "Daily",
-      "date": "2026-08-17",
-      "value": 3.2,
-      "previousDate": "2026-08-14",
-      "previousValue": 3.16,
-      "change": 0.04,
-      "stalenessDays": 1,
-      "tier": "daily",
-      "isFallback": false
-    },
-    "switzerland": {
-      "label": "Switzerland",
       "source": "fred",
       "frequency": "Monthly",
       "date": "2026-06-01",
-      "value": 0.31,
+      "value": 2.97,
       "previousDate": "2026-05-01",
-      "previousValue": 0.44,
-      "change": -0.13,
+      "previousValue": 3.0465,
+      "change": -0.0765,
       "stalenessDays": 78,
       "tier": "monthly",
-      "isFallback": true
-    },
-    "norway": {
-      "label": "Norway",
-      "source": "norges",
-      "frequency": "Daily",
-      "date": "2026-08-14",
-      "value": 4.26,
-      "previousDate": "2026-08-13",
-      "previousValue": 4.222,
-      "change": 0.038,
-      "stalenessDays": 4,
-      "tier": "delayed",
       "isFallback": false
-    },
-    "new_zealand": {
-      "label": "New Zealand",
-      "source": "fred",
-      "frequency": "Monthly",
-      "date": "2026-06-01",
-      "value": 4.46,
-      "previousDate": "2026-05-01",
-      "previousValue": 4.68,
-      "change": -0.22,
-      "stalenessDays": 78,
-      "tier": "monthly",
-      "isFallback": true
     },
     "france": {
       "label": "France",
@@ -182,6 +143,19 @@
       "previousDate": "2026-05-01",
       "previousValue": 3.165,
       "change": -0.088,
+      "stalenessDays": 78,
+      "tier": "monthly",
+      "isFallback": false
+    },
+    "switzerland": {
+      "label": "Switzerland",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-06-01",
+      "value": 0.31,
+      "previousDate": "2026-05-01",
+      "previousValue": 0.44,
+      "change": -0.13,
       "stalenessDays": 78,
       "tier": "monthly",
       "isFallback": false
@@ -277,6 +251,19 @@
       "tier": "monthly",
       "isFallback": false
     },
+    "norway": {
+      "label": "Norway",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-06-01",
+      "value": 4.2027,
+      "previousDate": "2026-05-01",
+      "previousValue": 4.3299,
+      "change": -0.1272,
+      "stalenessDays": 78,
+      "tier": "monthly",
+      "isFallback": false
+    },
     "india": {
       "label": "India",
       "source": "fred",
@@ -299,6 +286,19 @@
       "previousDate": "2026-05-01",
       "previousValue": 4.075,
       "change": 0.106,
+      "stalenessDays": 78,
+      "tier": "monthly",
+      "isFallback": false
+    },
+    "new_zealand": {
+      "label": "New Zealand",
+      "source": "fred",
+      "frequency": "Monthly",
+      "date": "2026-06-01",
+      "value": 4.46,
+      "previousDate": "2026-05-01",
+      "previousValue": 4.68,
+      "change": -0.22,
       "stalenessDays": 78,
       "tier": "monthly",
       "isFallback": false
