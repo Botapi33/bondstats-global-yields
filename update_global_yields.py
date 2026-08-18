@@ -2,72 +2,59 @@ import csv
 import io
 import json
 import os
-
-from datetime import datetime, timezone, timedelta
+import re
+from datetime import datetime, timezone
 from urllib.parse import urlencode
-from urllib.request import urlopen, Request
+from urllib.request import Request, urlopen
 
 
 # ============================================================
 # CONFIG
 # ============================================================
 
-API_KEY = os.environ.get("FRED_API_KEY")
+FRED_API_KEY = os.environ.get("FRED_API_KEY")
 
-if not API_KEY:
-    raise RuntimeError(
-        "Missing FRED_API_KEY environment variable."
-    )
-
+if not FRED_API_KEY:
+    raise RuntimeError("Missing FRED_API_KEY")
 
 OUTPUT_FILE = "global_yields.json"
+TEMP_FILE = "global_yields.json.tmp"
 
-TIMEOUT = 25
-
-# Weekend + holidays + publication delay.
-FRESHNESS_MAX_DAYS = 7
+TIMEOUT = 30
+DAILY_MAX_AGE = 7
 
 
 # ============================================================
 # HTTP
 # ============================================================
 
-def fetch_bytes(url, accept=None):
+def http_bytes(url, accept="*/*"):
 
-    headers = {
-        "User-Agent":
-            "BondStats Global Yields/3.0"
-    }
-
-    if accept:
-        headers["Accept"] = accept
-
-    req = Request(
+    request = Request(
         url,
-        headers=headers
+        headers={
+            "User-Agent": "BondStats-Global-Yields/4.0",
+            "Accept": accept
+        }
     )
 
     with urlopen(
-        req,
+        request,
         timeout=TIMEOUT
     ) as response:
 
         return response.read()
 
 
-def fetch_text(url, accept=None):
+def http_text(url, accept="*/*"):
 
-    raw = fetch_bytes(
-        url,
-        accept
-    )
+    raw = http_bytes(url, accept)
 
     for encoding in (
         "utf-8-sig",
         "utf-8",
         "latin-1"
     ):
-
         try:
             return raw.decode(encoding)
         except UnicodeDecodeError:
@@ -79,10 +66,10 @@ def fetch_text(url, accept=None):
     )
 
 
-def fetch_json(url):
+def http_json(url):
 
     return json.loads(
-        fetch_text(
+        http_text(
             url,
             "application/json"
         )
@@ -90,26 +77,25 @@ def fetch_json(url):
 
 
 # ============================================================
-# DATE HELPERS
+# BASIC HELPERS
 # ============================================================
 
 def parse_date(value):
 
-    if not value:
+    if value is None:
         return None
 
     value = str(value).strip()
 
-    # ISO timestamps
     if "T" in value:
         value = value.split("T")[0]
 
     formats = (
         "%Y-%m-%d",
+        "%Y/%m/%d",
         "%d/%m/%Y",
         "%d.%m.%Y",
-        "%d-%m-%Y",
-        "%Y/%m/%d"
+        "%d-%m-%Y"
     )
 
     for fmt in formats:
@@ -127,61 +113,34 @@ def parse_date(value):
 
 def normalize_date(value):
 
-    d = parse_date(value)
+    parsed = parse_date(value)
 
-    if not d:
+    if not parsed:
         return None
 
-    return d.strftime(
-        "%Y-%m-%d"
-    )
+    return parsed.strftime("%Y-%m-%d")
 
 
-def staleness_days(date_str):
+def days_old(value):
 
-    d = parse_date(date_str)
+    parsed = parse_date(value)
 
-    if not d:
+    if not parsed:
         return 9999
 
-    today = (
-        datetime.now(timezone.utc)
-        .replace(tzinfo=None)
+    today = datetime.now(
+        timezone.utc
+    ).replace(
+        tzinfo=None
     )
 
     return max(
         0,
-        (today - d).days
+        (today - parsed).days
     )
 
 
-def is_fresh(date_str):
-
-    return (
-        staleness_days(date_str)
-        <=
-        FRESHNESS_MAX_DAYS
-    )
-
-
-def calc_tier(days, frequency):
-
-    if frequency == "Monthly":
-        return "monthly"
-
-    if days <= 1:
-        return "daily"
-
-    if days <= 7:
-        return "delayed"
-
-    return "monthly"
-
-
-def r(value):
-
-    if value is None:
-        return None
+def round_value(value):
 
     return round(
         float(value),
@@ -189,445 +148,138 @@ def r(value):
     )
 
 
-# ============================================================
-# OBSERVATION VALIDATION
-# ============================================================
+def valid_yield(value):
 
-def make_result(
-    latest_date,
-    latest_value,
+    try:
+        value = float(value)
+    except (TypeError, ValueError):
+        return False
+
+    return -5.0 < value < 40.0
+
+
+def make_observation(
+    date,
+    value,
     previous_date,
     previous_value
 ):
 
-    latest_date = normalize_date(
-        latest_date
-    )
-
+    date = normalize_date(date)
     previous_date = normalize_date(
         previous_date
     )
 
-    if not latest_date:
+    if not date or not previous_date:
         raise RuntimeError(
-            "Invalid latest observation date."
+            "Invalid observation date"
         )
 
-    if not previous_date:
+    if not valid_yield(value):
         raise RuntimeError(
-            "Invalid previous observation date."
+            f"Invalid yield: {value}"
         )
 
-    latest_value = float(
-        latest_value
-    )
+    if not valid_yield(previous_value):
+        raise RuntimeError(
+            f"Invalid previous yield: "
+            f"{previous_value}"
+        )
 
+    value = float(value)
     previous_value = float(
         previous_value
     )
 
-    # Broad sovereign-yield sanity range.
-    if not (
-        -5.0
-        <
-        latest_value
-        <
-        40.0
-    ):
-        raise RuntimeError(
-            f"Implausible latest yield: "
-            f"{latest_value}"
-        )
-
-    if not (
-        -5.0
-        <
-        previous_value
-        <
-        40.0
-    ):
-        raise RuntimeError(
-            f"Implausible previous yield: "
-            f"{previous_value}"
-        )
-
     return {
-
-        "date":
-            latest_date,
-
-        "value":
-            r(latest_value),
+        "date": date,
+        "value": round_value(value),
 
         "previousDate":
             previous_date,
 
         "previousValue":
-            r(previous_value),
+            round_value(
+                previous_value
+            ),
 
         "change":
-            r(
-                latest_value
-                -
+            round_value(
+                value -
                 previous_value
             )
     }
 
 
-def valid_daily_result(result):
+def is_current(obs):
 
-    if not result:
+    if not obs:
         return False
 
-    if not is_fresh(
-        result.get("date")
-    ):
-        return False
-
-    value = result.get(
-        "value"
+    return (
+        valid_yield(
+            obs.get("value")
+        )
+        and
+        days_old(
+            obs.get("date")
+        )
+        <= DAILY_MAX_AGE
     )
 
-    if value is None:
-        return False
 
-    if not (
-        -5.0
-        <
-        float(value)
-        <
-        40.0
+def tier_for(
+    date,
+    frequency
+):
+
+    age = days_old(date)
+
+    if frequency == "Monthly":
+        return "monthly"
+
+    if age <= 1:
+        return "daily"
+
+    if age <= 7:
+        return "delayed"
+
+    return "monthly"
+
+
+# ============================================================
+# EXISTING DATA
+# ============================================================
+
+def load_existing():
+
+    if not os.path.exists(
+        OUTPUT_FILE
     ):
-        return False
+        return {
+            "countries": {}
+        }
 
-    return True
+    try:
 
+        with open(
+            OUTPUT_FILE,
+            "r",
+            encoding="utf-8"
+        ) as file:
 
-# ============================================================
-# EXISTING COUNTRY DEFINITIONS
-#
-# Slugs are intentionally preserved.
-# ============================================================
+            return json.load(file)
 
-SERIES = {
+    except Exception as exc:
 
-    "united_states": {
-        "label":"United States",
-        "series_id":"DGS10",
-        "primary_source":"fred",
-        "frequency_hint":"Daily"
-    },
+        print(
+            "Existing JSON unreadable:",
+            exc
+        )
 
-    "euro_area": {
-        "label":"Euro Area",
-        "primary_source":"ecb"
-    },
-
-    "united_kingdom": {
-        "label":"United Kingdom",
-        "primary_source":"riksbank",
-        "riksbank_series":"GBGVB10Y",
-        "fallback_series_id":"IRLTLT01GBM156N"
-    },
-
-    "canada": {
-        "label":"Canada",
-        "primary_source":"boc",
-        "series_id":"V39055",
-        "fallback_series_id":"IRLTLT01CAM156N"
-    },
-
-    "australia": {
-        "label":"Australia",
-        "primary_source":"rba",
-        "fallback_series_id":"IRLTLT01AUM156N"
-    },
-
-    "sweden": {
-        "label":"Sweden",
-        "primary_source":"riksbank",
-        "riksbank_series":"SEGVB10YC",
-        "fallback_series_id":"IRLTLT01SEM156N"
-    },
-
-    "germany": {
-        "label":"Germany",
-        "primary_source":"riksbank",
-        "riksbank_series":"DEGVB10Y",
-        "fallback_series_id":"IRLTLT01DEM156N"
-    },
-
-    "france": {
-        "label":"France",
-        "primary_source":"riksbank",
-        "riksbank_series":"FRGVB10Y",
-        "fallback_series_id":"IRLTLT01FRM156N"
-    },
-
-    "italy": {
-        "label":"Italy",
-        "series_id":"IRLTLT01ITM156N",
-        "primary_source":"market"
-    },
-
-    "spain": {
-        "label":"Spain",
-        "series_id":"IRLTLT01ESM156N",
-        "primary_source":"market"
-    },
-
-    "netherlands": {
-        "label":"Netherlands",
-        "primary_source":"riksbank",
-        "riksbank_series":"NLGVB10Y",
-        "fallback_series_id":"IRLTLT01NLM156N"
-    },
-
-    "switzerland": {
-        "label":"Switzerland",
-        "series_id":"IRLTLT01CHM156N",
-        "primary_source":"market"
-    },
-
-    "sweden_fred": {
-        "label":"Sweden (OECD)",
-        "series_id":"IRLTLT01SEM156N",
-        "primary_source":"fred"
-    },
-
-    "belgium": {
-        "label":"Belgium",
-        "series_id":"IRLTLT01BEM156N",
-        "primary_source":"market"
-    },
-
-    "austria": {
-        "label":"Austria",
-        "series_id":"IRLTLT01ATM156N",
-        "primary_source":"market"
-    },
-
-    "portugal": {
-        "label":"Portugal",
-        "series_id":"IRLTLT01PTM156N",
-        "primary_source":"market"
-    },
-
-    "finland": {
-        "label":"Finland",
-        "primary_source":"riksbank",
-        "riksbank_series":"FIGVB10Y",
-        "fallback_series_id":"IRLTLT01FIM156N"
-    },
-
-    "ireland": {
-        "label":"Ireland",
-        "series_id":"IRLTLT01IEM156N",
-        "primary_source":"market"
-    },
-
-    "denmark": {
-        "label":"Denmark",
-        "primary_source":"riksbank",
-        "riksbank_series":"DKGVB10Y",
-        "fallback_series_id":"IRLTLT01DKM156N"
-    },
-
-    "norway": {
-        "label":"Norway",
-        "primary_source":"riksbank",
-        "riksbank_series":"NOGVB10Y",
-        "fallback_series_id":"IRLTLT01NOM156N"
-    },
-
-    "india": {
-        "label":"India",
-        "series_id":"INDIRLTLT01STM",
-        "primary_source":"market"
-    },
-
-    "south_korea": {
-        "label":"South Korea",
-        "series_id":"IRLTLT01KRM156N",
-        "primary_source":"market"
-    },
-
-    "new_zealand": {
-        "label":"New Zealand",
-        "series_id":"IRLTLT01NZM156N",
-        "primary_source":"market"
-    },
-
-    "greece": {
-        "label":"Greece",
-        "series_id":"IRLTLT01GRM156N",
-        "primary_source":"market"
-    },
-
-    "israel": {
-        "label":"Israel",
-        "series_id":"IRLTLT01ILM156N",
-        "primary_source":"market"
-    },
-
-    "mexico": {
-        "label":"Mexico",
-        "series_id":"IRLTLT01MXM156N",
-        "primary_source":"market"
-    },
-
-    "poland": {
-        "label":"Poland",
-        "series_id":"IRLTLT01PLM156N",
-        "primary_source":"market"
-    },
-
-    "czech_republic": {
-        "label":"Czech Republic",
-        "series_id":"IRLTLT01CZM156N",
-        "primary_source":"market"
-    },
-
-    "hungary": {
-        "label":"Hungary",
-        "series_id":"IRLTLT01HUM156N",
-        "primary_source":"market"
-    },
-
-    "slovakia": {
-        "label":"Slovakia",
-        "series_id":"IRLTLT01SKM156N",
-        "primary_source":"market"
-    },
-
-    "slovenia": {
-        "label":"Slovenia",
-        "series_id":"IRLTLT01SIM156N",
-        "primary_source":"market"
-    },
-
-    "lithuania": {
-        "label":"Lithuania",
-        "series_id":"LTUIRLTLT01STM",
-        "primary_source":"market"
-    },
-
-    "chile": {
-        "label":"Chile",
-        "series_id":"IRLTLT01CLM156N",
-        "primary_source":"market"
-    },
-
-    "south_africa": {
-        "label":"South Africa",
-        "series_id":"IRLTLT01ZAM156N",
-        "primary_source":"market"
-    }
-}
-
-
-# ============================================================
-# STOOQ SYMBOLS
-#
-# Public daily market-data feed.
-# Invalid / stale symbols are automatically rejected.
-# ============================================================
-
-STOOQ_SYMBOLS = {
-
-    "united_kingdom":
-        "10YGBY.B",
-
-    "canada":
-        "10YCAY.B",
-
-    "australia":
-        "10YAUY.B",
-
-    "sweden":
-        "10YSEY.B",
-
-    "germany":
-        "10YDEY.B",
-
-    "france":
-        "10YFRY.B",
-
-    "italy":
-        "10YITY.B",
-
-    "spain":
-        "10YESY.B",
-
-    "netherlands":
-        "10YNLY.B",
-
-    "switzerland":
-        "10YCHY.B",
-
-    "belgium":
-        "10YBEY.B",
-
-    "austria":
-        "10YATY.B",
-
-    "portugal":
-        "10YPTY.B",
-
-    "finland":
-        "10YFIY.B",
-
-    "ireland":
-        "10YIEY.B",
-
-    "denmark":
-        "10YDKY.B",
-
-    "norway":
-        "10YNOY.B",
-
-    "india":
-        "10YINY.B",
-
-    "south_korea":
-        "10YKRY.B",
-
-    "new_zealand":
-        "10YNZY.B",
-
-    "greece":
-        "10YGRY.B",
-
-    "israel":
-        "10YILY.B",
-
-    "mexico":
-        "10YMXY.B",
-
-    "poland":
-        "10YPLY.B",
-
-    "czech_republic":
-        "10YCZY.B",
-
-    "hungary":
-        "10YHUY.B",
-
-    "slovakia":
-        "10YSKY.B",
-
-    "slovenia":
-        "10YSIY.B",
-
-    "lithuania":
-        "10YLTY.B",
-
-    "chile":
-        "10YCLY.B",
-
-    "south_africa":
-        "10YZAY.B"
-}
+        return {
+            "countries": {}
+        }
 
 
 # ============================================================
@@ -645,7 +297,7 @@ def fetch_fred(series_id):
                 series_id,
 
             "api_key":
-                API_KEY,
+                FRED_API_KEY,
 
             "file_type":
                 "json",
@@ -654,47 +306,49 @@ def fetch_fred(series_id):
                 "desc",
 
             "limit":
-                12
+                20
         })
     )
 
-    data = fetch_json(url)
+    data = http_json(url)
 
-    observations = [
+    observations = []
 
-        item
+    for item in data.get(
+        "observations",
+        []
+    ):
 
-        for item in
-        data.get(
-            "observations",
-            []
-        )
+        value = item.get("value")
 
-        if item.get("value")
-        not in (
+        if value in (
             ".",
             "",
             None
+        ):
+            continue
+
+        if not valid_yield(value):
+            continue
+
+        observations.append(
+            (
+                item["date"],
+                float(value)
+            )
         )
-    ]
 
     if len(observations) < 2:
-
         raise RuntimeError(
-            f"FRED insufficient data "
-            f"for {series_id}"
+            f"FRED {series_id}: "
+            "not enough observations"
         )
 
-    latest = observations[0]
-    previous = observations[1]
-
-    return make_result(
-
-        latest["date"],
-        latest["value"],
-
-        previous["date"],
-        previous["value"]
+    return make_observation(
+        observations[0][0],
+        observations[0][1],
+        observations[1][0],
+        observations[1][1]
     )
 
 
@@ -712,61 +366,56 @@ def fetch_ecb():
         "?format=jsondata"
     )
 
-    data = fetch_json(url)
+    data = http_json(url)
+
+    dataset = data[
+        "dataSets"
+    ][0]
 
     series = next(
         iter(
-            data[
-                "dataSets"
-            ][0][
+            dataset[
                 "series"
             ].values()
         )
     )
 
     observations = (
-        series[
-            "observations"
-        ]
+        series["observations"]
+    )
+
+    dates = (
+        data["structure"]
+        ["dimensions"]
+        ["observation"][0]
+        ["values"]
     )
 
     keys = sorted(
-        observations.keys(),
+        observations,
         key=lambda x:
             int(x)
     )
 
-    times = (
-        data[
-            "structure"
-        ][
-            "dimensions"
-        ][
-            "observation"
-        ][0][
-            "values"
-        ]
-    )
+    latest = keys[-1]
+    previous = keys[-2]
 
-    latest_key = keys[-1]
-    previous_key = keys[-2]
+    return make_observation(
 
-    return make_result(
-
-        times[
-            int(latest_key)
+        dates[
+            int(latest)
         ]["id"],
 
         observations[
-            latest_key
+            latest
         ][0],
 
-        times[
-            int(previous_key)
+        dates[
+            int(previous)
         ]["id"],
 
         observations[
-            previous_key
+            previous
         ][0]
     )
 
@@ -774,54 +423,155 @@ def fetch_ecb():
 # ============================================================
 # RIKSBANK
 #
-# One official public API now supplies:
+# IMPORTANT:
+# Correct official endpoint:
 #
-# Sweden
-# Germany
-# France
-# Netherlands
-# UK
-# Norway
-# Denmark
-# Finland
+# /Observations/Latest/ByGroup/100
+#
+# Group 100 =
+# international 10Y government bonds.
 # ============================================================
 
-def fetch_riksbank(series_id):
+RIKSBANK_GROUP_URL = (
+    "https://api.riksbank.se/"
+    "swea/v1/Observations/"
+    "Latest/ByGroup/100"
+)
 
-    url = (
-        "https://api.riksbank.se/"
-        "swea/v1/Observations/"
-        +
-        series_id
+
+RIKSBANK_SERIES = {
+
+    "united_states":
+        "USGVB10Y",
+
+    "germany":
+        "DEGVB10Y",
+
+    "france":
+        "FRGVB10Y",
+
+    "netherlands":
+        "NLGVB10Y",
+
+    "united_kingdom":
+        "GBGVB10Y",
+
+    "norway":
+        "NOGVB10Y",
+
+    "denmark":
+        "DKGVB10Y",
+
+    "finland":
+        "FIGVB10Y"
+}
+
+
+def identify_series(item):
+
+    candidates = (
+        "seriesId",
+        "seriesID",
+        "SeriesId",
+        "SeriesID",
+        "series",
+        "Series"
     )
 
-    data = fetch_json(url)
+    for key in candidates:
+
+        value = item.get(key)
+
+        if value:
+            return str(value).upper()
+
+    return None
+
+
+def identify_value(item):
+
+    candidates = (
+        "value",
+        "Value",
+        "observationValue",
+        "ObservationValue"
+    )
+
+    for key in candidates:
+
+        value = item.get(key)
+
+        if value is not None:
+            return value
+
+    return None
+
+
+def identify_date(item):
+
+    candidates = (
+        "date",
+        "Date",
+        "observationDate",
+        "ObservationDate",
+        "dateValue",
+        "DateValue"
+    )
+
+    for key in candidates:
+
+        value = item.get(key)
+
+        if value:
+            return value
+
+    return None
+
+
+def flatten_items(data):
+
+    if isinstance(data, list):
+        return data
 
     if isinstance(data, dict):
 
-        observations = (
-            data.get("observations")
-            or
-            data.get("Observations")
-            or
-            data.get("value")
-            or
-            []
-        )
+        for key in (
+            "observations",
+            "Observations",
+            "value",
+            "Value",
+            "data",
+            "Data"
+        ):
 
-    elif isinstance(data, list):
+            value = data.get(key)
 
-        observations = data
+            if isinstance(value, list):
+                return value
 
-    else:
+        return [data]
 
-        observations = []
-
-
-    parsed = []
+    return []
 
 
-    for item in observations:
+def fetch_riksbank_group():
+
+    data = http_json(
+        RIKSBANK_GROUP_URL
+    )
+
+    items = flatten_items(data)
+
+    results = {}
+
+    reverse_map = {
+        series:
+            slug
+        for slug, series
+        in RIKSBANK_SERIES.items()
+    }
+
+    for item in items:
 
         if not isinstance(
             item,
@@ -829,114 +579,123 @@ def fetch_riksbank(series_id):
         ):
             continue
 
-        date = (
-
-            item.get("date")
-            or
-            item.get("Date")
-            or
-            item.get("dateValue")
-            or
-            item.get(
-                "observationDate"
-            )
+        series_id = identify_series(
+            item
         )
 
-        value = (
+        if not series_id:
+            continue
 
-            item.get("value")
-            or
-            item.get("Value")
-            or
-            item.get(
-                "observationValue"
-            )
+        slug = reverse_map.get(
+            series_id
+        )
+
+        if not slug:
+            continue
+
+        value = identify_value(
+            item
+        )
+
+        date = identify_date(
+            item
         )
 
         if (
+            value is None
+            or
             not date
             or
-            value is None
+            not valid_yield(value)
         ):
             continue
 
-        try:
+        results[slug] = {
+            "date":
+                normalize_date(date),
 
-            parsed.append(
-                (
-                    normalize_date(
-                        date
-                    ),
-                    float(value)
-                )
-            )
+            "value":
+                float(value)
+        }
 
-        except Exception:
-            pass
+    return results
 
 
-    parsed = [
-        item
-        for item in parsed
-        if item[0]
-    ]
+# ============================================================
+# RIKSBANK SWEDEN
+# ============================================================
 
+def fetch_riksbank_latest(
+    series_id
+):
 
-    parsed.sort(
-        key=lambda item:
-            item[0]
+    url = (
+        "https://api.riksbank.se/"
+        "swea/v1/Observations/"
+        "Latest/"
+        +
+        series_id
     )
 
+    data = http_json(url)
 
-    if len(parsed) < 2:
+    items = flatten_items(data)
 
+    if not items:
         raise RuntimeError(
-            "Riksbank returned "
-            "insufficient observations "
-            f"for {series_id}"
+            f"Riksbank {series_id}: "
+            "empty response"
         )
 
+    item = items[0]
 
-    latest = parsed[-1]
-    previous = parsed[-2]
+    date = identify_date(item)
+    value = identify_value(item)
 
+    if not date:
+        raise RuntimeError(
+            "Riksbank date missing"
+        )
 
-    return make_result(
+    if not valid_yield(value):
+        raise RuntimeError(
+            "Riksbank yield invalid"
+        )
 
-        latest[0],
-        latest[1],
+    return {
+        "date":
+            normalize_date(date),
 
-        previous[0],
-        previous[1]
-    )
+        "value":
+            float(value)
+    }
 
 
 # ============================================================
 # BANK OF CANADA
-#
-# Official Valet API
 # ============================================================
 
-def fetch_boc(series_id):
+def fetch_boc():
+
+    series_id = "V39055"
 
     url = (
         "https://www.bankofcanada.ca/"
         "valet/observations/"
         f"{series_id}/json"
-        "?recent=10"
+        "?recent=15"
     )
 
-    data = fetch_json(url)
+    data = http_json(url)
 
-    parsed = []
+    rows = []
 
-
-    for observation in data.get(
+    for item in data.get(
         "observations",
         []
     ):
 
-        series = observation.get(
+        series = item.get(
             series_id
         )
 
@@ -944,47 +703,38 @@ def fetch_boc(series_id):
             continue
 
         value = series.get("v")
-
-        date = observation.get("d")
+        date = item.get("d")
 
         if (
-            value is None
-            or
             not date
+            or
+            not valid_yield(value)
         ):
             continue
 
-        parsed.append(
+        rows.append(
             (
                 date,
                 float(value)
             )
         )
 
-
-    parsed.sort(
-        key=lambda item:
-            item[0]
+    rows.sort(
+        key=lambda x:
+            x[0]
     )
 
-
-    if len(parsed) < 2:
-
+    if len(rows) < 2:
         raise RuntimeError(
-            "Bank of Canada returned "
-            "insufficient observations."
+            "BoC: not enough observations"
         )
 
+    latest = rows[-1]
+    previous = rows[-2]
 
-    latest = parsed[-1]
-    previous = parsed[-2]
-
-
-    return make_result(
-
+    return make_observation(
         latest[0],
         latest[1],
-
         previous[0],
         previous[1]
     )
@@ -993,597 +743,836 @@ def fetch_boc(series_id):
 # ============================================================
 # RBA
 #
-# Official public F2.1 CSV.
-# If parsing ever changes, Stooq takes over.
+# IMPORTANT:
+# F2 = daily/near-daily table.
+# Do NOT use F2.1 here;
+# F2.1 is monthly.
 # ============================================================
 
-def fetch_rba():
-
-    url = (
-        "https://www.rba.gov.au/"
-        "statistics/tables/csv/"
-        "f2.1-data.csv"
-    )
-
-    text = fetch_text(url)
-
-    rows = list(
-        csv.reader(
-            io.StringIO(text)
-        )
-    )
-
-    ten_year_column = None
-
-
-    for row in rows[:20]:
-
-        for index, cell in enumerate(row):
-
-            normalized = (
-                cell.lower()
-                .replace("-", " ")
-            )
-
-            if (
-                "10 year"
-                in normalized
-                and
-                (
-                    "government"
-                    in normalized
-                    or
-                    "bond"
-                    in normalized
-                )
-            ):
-
-                ten_year_column = index
-                break
-
-        if ten_year_column is not None:
-            break
-
-
-    if ten_year_column is None:
-
-        raise RuntimeError(
-            "Could not locate RBA "
-            "10Y government-bond column."
-        )
-
-
-    observations = []
-
-
-    for row in rows:
-
-        if (
-            len(row)
-            <=
-            ten_year_column
-        ):
-            continue
-
-        date = parse_date(
-            row[0]
-        )
-
-        if not date:
-            continue
-
-        raw_value = (
-            row[
-                ten_year_column
-            ].strip()
-        )
-
-        try:
-            value = float(
-                raw_value
-            )
-        except ValueError:
-            continue
-
-        observations.append(
-            (
-                date.strftime(
-                    "%Y-%m-%d"
-                ),
-                value
-            )
-        )
-
-
-    observations.sort(
-        key=lambda item:
-            item[0]
-    )
-
-
-    if len(observations) < 2:
-
-        raise RuntimeError(
-            "RBA returned insufficient "
-            "10Y observations."
-        )
-
-
-    latest = observations[-1]
-    previous = observations[-2]
-
-
-    return make_result(
-
-        latest[0],
-        latest[1],
-
-        previous[0],
-        previous[1]
-    )
-
-
-# ============================================================
-# STOOQ DAILY PUBLIC CSV FEED
-# ============================================================
-
-def fetch_stooq(symbol):
-
-    today = datetime.now(
-        timezone.utc
-    )
-
-    start = (
-        today
-        -
-        timedelta(days=30)
-    )
-
-
-    url = (
-        "https://stooq.com/q/d/l/?"
-        +
-        urlencode({
-            "s":
-                symbol.lower(),
-
-            "d1":
-                start.strftime(
-                    "%Y%m%d"
-                ),
-
-            "d2":
-                today.strftime(
-                    "%Y%m%d"
-                ),
-
-            "i":
-                "d"
-        })
-    )
-
-
-    text = fetch_text(
-        url,
-        "text/csv"
-    )
-
-
-    reader = csv.DictReader(
-        io.StringIO(text)
-    )
-
-
-    observations = []
-
-
-    for row in reader:
-
-        date = (
-            row.get("Date")
-            or
-            row.get("DATE")
-            or
-            row.get("date")
-        )
-
-        close = (
-            row.get("Close")
-            or
-            row.get("CLOSE")
-            or
-            row.get("close")
-        )
-
-
-        if (
-            not date
-            or
-            close in (
-                None,
-                "",
-                "N/D"
-            )
-        ):
-            continue
-
-
-        try:
-
-            observations.append(
-                (
-                    normalize_date(
-                        date
-                    ),
-                    float(close)
-                )
-            )
-
-        except Exception:
-            continue
-
-
-    observations = [
-
-        item
-
-        for item in observations
-
-        if item[0]
-    ]
-
-
-    observations.sort(
-        key=lambda item:
-            item[0]
-    )
-
-
-    if len(observations) < 2:
-
-        raise RuntimeError(
-            f"Stooq returned insufficient "
-            f"data for {symbol}"
-        )
-
-
-    latest = observations[-1]
-    previous = observations[-2]
-
-
-    result = make_result(
-
-        latest[0],
-        latest[1],
-
-        previous[0],
-        previous[1]
-    )
-
-
-    if not valid_daily_result(
-        result
-    ):
-
-        raise RuntimeError(
-            f"Stooq {symbol} is stale "
-            f"or invalid: "
-            f"{result['date']}"
-        )
-
-
-    return result
-
-
-# ============================================================
-# MARKET FALLBACK
-# ============================================================
-
-def try_market(slug):
-
-    symbol = STOOQ_SYMBOLS.get(
-        slug
-    )
-
-    if not symbol:
-
-        return None
+def detect_delimiter(text):
 
     try:
 
-        result = fetch_stooq(
-            symbol
+        return csv.Sniffer().sniff(
+            text[:8000],
+            delimiters=",;\t"
         )
 
-        print(
-            f"Stooq {slug}: "
-            f"{result['date']} "
-            f"{result['value']}"
+    except csv.Error:
+
+        return csv.excel
+
+
+def fetch_rba():
+
+    possible_urls = (
+
+        "https://www.rba.gov.au/"
+        "statistics/tables/csv/"
+        "f2-data.csv",
+
+        "https://www.rba.gov.au/"
+        "statistics/tables/csv/"
+        "f2.csv"
+    )
+
+    last_error = None
+
+    for url in possible_urls:
+
+        try:
+
+            text = http_text(
+                url,
+                "text/csv"
+            )
+
+            rows = list(
+                csv.reader(
+                    io.StringIO(text),
+                    dialect=
+                        detect_delimiter(
+                            text
+                        )
+                )
+            )
+
+            column = None
+
+            for row in rows[:30]:
+
+                for index, cell in enumerate(
+                    row
+                ):
+
+                    label = re.sub(
+                        r"\s+",
+                        " ",
+                        cell.lower()
+                        .replace("-", " ")
+                    )
+
+                    if (
+                        "10 year"
+                        in label
+                        and
+                        (
+                            "government"
+                            in label
+                            or
+                            "bond"
+                            in label
+                        )
+                    ):
+
+                        column = index
+                        break
+
+                if column is not None:
+                    break
+
+            if column is None:
+                raise RuntimeError(
+                    "RBA 10Y column "
+                    "not found"
+                )
+
+            observations = []
+
+            for row in rows:
+
+                if len(row) <= column:
+                    continue
+
+                date = parse_date(
+                    row[0]
+                )
+
+                if not date:
+                    continue
+
+                value = (
+                    row[column]
+                    .strip()
+                    .replace("%", "")
+                )
+
+                if not valid_yield(value):
+                    continue
+
+                observations.append(
+                    (
+                        date.strftime(
+                            "%Y-%m-%d"
+                        ),
+                        float(value)
+                    )
+                )
+
+            observations.sort(
+                key=lambda x:
+                    x[0]
+            )
+
+            if len(observations) < 2:
+                raise RuntimeError(
+                    "RBA: not enough "
+                    "10Y observations"
+                )
+
+            latest = observations[-1]
+            previous = observations[-2]
+
+            return make_observation(
+                latest[0],
+                latest[1],
+                previous[0],
+                previous[1]
+            )
+
+        except Exception as exc:
+
+            last_error = exc
+
+    raise RuntimeError(
+        f"RBA failed: {last_error}"
+    )
+
+
+# ============================================================
+# COUNTRY CONFIG
+#
+# ALL EXISTING SLUGS KEPT.
+# ============================================================
+
+COUNTRIES = {
+
+    "united_states": {
+        "label":
+            "United States",
+
+        "primary":
+            "fred",
+
+        "fred":
+            "DGS10",
+
+        "fred_frequency":
+            "Daily"
+    },
+
+
+    "euro_area": {
+        "label":
+            "Euro Area",
+
+        "primary":
+            "ecb"
+    },
+
+
+    "united_kingdom": {
+        "label":
+            "United Kingdom",
+
+        "primary":
+            "riksbank",
+
+        "fred":
+            "IRLTLT01GBM156N"
+    },
+
+
+    "canada": {
+        "label":
+            "Canada",
+
+        "primary":
+            "boc",
+
+        "fred":
+            "IRLTLT01CAM156N"
+    },
+
+
+    "australia": {
+        "label":
+            "Australia",
+
+        "primary":
+            "rba",
+
+        "fred":
+            "IRLTLT01AUM156N"
+    },
+
+
+    "sweden": {
+        "label":
+            "Sweden",
+
+        "primary":
+            "riksbank_sweden",
+
+        "riksbank":
+            "SEGVB10YC",
+
+        "fred":
+            "IRLTLT01SEM156N"
+    },
+
+
+    "germany": {
+        "label":
+            "Germany",
+
+        "primary":
+            "riksbank",
+
+        "fred":
+            "IRLTLT01DEM156N"
+    },
+
+
+    "france": {
+        "label":
+            "France",
+
+        "primary":
+            "riksbank",
+
+        "fred":
+            "IRLTLT01FRM156N"
+    },
+
+
+    "italy": {
+        "label":
+            "Italy",
+
+        "primary":
+            "fred",
+
+        "fred":
+            "IRLTLT01ITM156N"
+    },
+
+
+    "spain": {
+        "label":
+            "Spain",
+
+        "primary":
+            "fred",
+
+        "fred":
+            "IRLTLT01ESM156N"
+    },
+
+
+    "netherlands": {
+        "label":
+            "Netherlands",
+
+        "primary":
+            "riksbank",
+
+        "fred":
+            "IRLTLT01NLM156N"
+    },
+
+
+    "switzerland": {
+        "label":
+            "Switzerland",
+
+        "primary":
+            "fred",
+
+        "fred":
+            "IRLTLT01CHM156N"
+    },
+
+
+    "sweden_fred": {
+        "label":
+            "Sweden (OECD)",
+
+        "primary":
+            "fred",
+
+        "fred":
+            "IRLTLT01SEM156N"
+    },
+
+
+    "belgium": {
+        "label":"Belgium",
+        "primary":"fred",
+        "fred":"IRLTLT01BEM156N"
+    },
+
+
+    "austria": {
+        "label":"Austria",
+        "primary":"fred",
+        "fred":"IRLTLT01ATM156N"
+    },
+
+
+    "portugal": {
+        "label":"Portugal",
+        "primary":"fred",
+        "fred":"IRLTLT01PTM156N"
+    },
+
+
+    "finland": {
+        "label":
+            "Finland",
+
+        "primary":
+            "riksbank",
+
+        "fred":
+            "IRLTLT01FIM156N"
+    },
+
+
+    "ireland": {
+        "label":"Ireland",
+        "primary":"fred",
+        "fred":"IRLTLT01IEM156N"
+    },
+
+
+    "denmark": {
+        "label":
+            "Denmark",
+
+        "primary":
+            "riksbank",
+
+        "fred":
+            "IRLTLT01DKM156N"
+    },
+
+
+    "norway": {
+        "label":
+            "Norway",
+
+        "primary":
+            "riksbank",
+
+        "fred":
+            "IRLTLT01NOM156N"
+    },
+
+
+    "india": {
+        "label":"India",
+        "primary":"fred",
+        "fred":"INDIRLTLT01STM"
+    },
+
+
+    "south_korea": {
+        "label":"South Korea",
+        "primary":"fred",
+        "fred":"IRLTLT01KRM156N"
+    },
+
+
+    "new_zealand": {
+        "label":"New Zealand",
+        "primary":"fred",
+        "fred":"IRLTLT01NZM156N"
+    },
+
+
+    "greece": {
+        "label":"Greece",
+        "primary":"fred",
+        "fred":"IRLTLT01GRM156N"
+    },
+
+
+    "israel": {
+        "label":"Israel",
+        "primary":"fred",
+        "fred":"IRLTLT01ILM156N"
+    },
+
+
+    "mexico": {
+        "label":"Mexico",
+        "primary":"fred",
+        "fred":"IRLTLT01MXM156N"
+    },
+
+
+    "poland": {
+        "label":"Poland",
+        "primary":"fred",
+        "fred":"IRLTLT01PLM156N"
+    },
+
+
+    "czech_republic": {
+        "label":"Czech Republic",
+        "primary":"fred",
+        "fred":"IRLTLT01CZM156N"
+    },
+
+
+    "hungary": {
+        "label":"Hungary",
+        "primary":"fred",
+        "fred":"IRLTLT01HUM156N"
+    },
+
+
+    "slovakia": {
+        "label":"Slovakia",
+        "primary":"fred",
+        "fred":"IRLTLT01SKM156N"
+    },
+
+
+    "slovenia": {
+        "label":"Slovenia",
+        "primary":"fred",
+        "fred":"IRLTLT01SIM156N"
+    },
+
+
+    "lithuania": {
+        "label":"Lithuania",
+        "primary":"fred",
+        "fred":"LTUIRLTLT01STM"
+    },
+
+
+    "chile": {
+        "label":"Chile",
+        "primary":"fred",
+        "fred":"IRLTLT01CLM156N"
+    },
+
+
+    "south_africa": {
+        "label":"South Africa",
+        "primary":"fred",
+        "fred":"IRLTLT01ZAM156N"
+    }
+}
+
+
+# ============================================================
+# BUILD FROM RIKSBANK LATEST + PREVIOUS STORED OBSERVATION
+#
+# We deliberately preserve the prior stored observation
+# rather than inventing a previous quote.
+# ============================================================
+
+def from_riksbank_latest(
+    slug,
+    latest,
+    old
+):
+
+    if slug not in latest:
+        raise RuntimeError(
+            "Riksbank series missing"
         )
 
-        return result
+    current = latest[slug]
 
-    except Exception as error:
-
-        print(
-            f"Stooq failed for "
-            f"{slug}: {error}"
+    if (
+        not current.get("date")
+        or
+        not valid_yield(
+            current.get("value")
+        )
+    ):
+        raise RuntimeError(
+            "Riksbank result invalid"
         )
 
-        return None
+    if not is_current(current):
+        raise RuntimeError(
+            "Riksbank result stale"
+        )
+
+    previous_date = old.get(
+        "date"
+    )
+
+    previous_value = old.get(
+        "value"
+    )
+
+    # If old data were monthly, change is not
+    # a true one-day move. We therefore avoid
+    # fabricating a daily move and set previous
+    # to current on the first migration.
+    if (
+        not previous_date
+        or
+        not valid_yield(previous_value)
+        or
+        old.get("frequency")
+        != "Daily"
+    ):
+
+        previous_date = (
+            current["date"]
+        )
+
+        previous_value = (
+            current["value"]
+        )
+
+    return make_observation(
+
+        current["date"],
+        current["value"],
+
+        previous_date,
+        previous_value
+    )
 
 
 # ============================================================
 # ROUTER
-#
-# OFFICIAL
-# ↓
-# STOOQ DAILY
-# ↓
-# FRED/OECD MONTHLY
-# ↓
-# OLD JSON
 # ============================================================
 
-def fetch_data(
+def get_country(
     slug,
-    info
+    config,
+    old_country,
+    riksbank_group
 ):
 
-    primary = info[
-        "primary_source"
+    primary = config[
+        "primary"
     ]
 
 
-    # --------------------------------------------------------
-    # UNITED STATES
-    # --------------------------------------------------------
+    # ---------------------------
+    # USA
+    # ---------------------------
 
-    if (
-        slug ==
-        "united_states"
-    ):
+    if primary == "fred":
 
-        result = fetch_fred(
-            info["series_id"]
+        observation = fetch_fred(
+            config["fred"]
+        )
+
+        frequency = config.get(
+            "fred_frequency",
+            "Monthly"
         )
 
         return (
-            result,
+            observation,
             "fred",
-            "Daily",
+            frequency,
             False
         )
 
 
-    # --------------------------------------------------------
-    # EURO AREA
-    # --------------------------------------------------------
+    # ---------------------------
+    # ECB
+    # ---------------------------
 
-    if (
-        slug ==
-        "euro_area"
-    ):
+    if primary == "ecb":
 
         try:
 
-            result = fetch_ecb()
+            observation = fetch_ecb()
 
-            if valid_daily_result(
-                result
+            if is_current(
+                observation
             ):
 
                 return (
-                    result,
+                    observation,
                     "ecb",
                     "Daily",
                     False
                 )
 
-        except Exception as error:
+        except Exception as exc:
 
             print(
+                slug,
                 "ECB failed:",
-                error
+                exc
             )
 
 
-    # --------------------------------------------------------
-    # RIKSBANK MULTI-COUNTRY
-    # --------------------------------------------------------
+    # ---------------------------
+    # RIKSBANK GROUP
+    # ---------------------------
+
+    if primary == "riksbank":
+
+        try:
+
+            observation = (
+                from_riksbank_latest(
+                    slug,
+                    riksbank_group,
+                    old_country
+                )
+            )
+
+            return (
+                observation,
+                "riksbank",
+                "Daily",
+                False
+            )
+
+        except Exception as exc:
+
+            print(
+                slug,
+                "Riksbank failed:",
+                exc
+            )
+
+
+    # ---------------------------
+    # SWEDEN
+    # ---------------------------
 
     if (
         primary ==
-        "riksbank"
+        "riksbank_sweden"
     ):
 
         try:
 
-            result = fetch_riksbank(
-                info[
-                    "riksbank_series"
-                ]
+            latest = (
+                fetch_riksbank_latest(
+                    config[
+                        "riksbank"
+                    ]
+                )
             )
 
-            if valid_daily_result(
-                result
+            if not is_current(
+                latest
             ):
 
-                return (
-                    result,
-                    "riksbank",
-                    "Daily",
-                    False
+                raise RuntimeError(
+                    "Swedish rate stale"
                 )
 
-        except Exception as error:
+            previous_date = (
+                old_country.get(
+                    "date"
+                )
+            )
+
+            previous_value = (
+                old_country.get(
+                    "value"
+                )
+            )
+
+            if (
+                old_country.get(
+                    "frequency"
+                )
+                != "Daily"
+                or
+                not previous_date
+                or
+                not valid_yield(
+                    previous_value
+                )
+            ):
+
+                previous_date = (
+                    latest["date"]
+                )
+
+                previous_value = (
+                    latest["value"]
+                )
+
+            observation = (
+                make_observation(
+                    latest["date"],
+                    latest["value"],
+                    previous_date,
+                    previous_value
+                )
+            )
+
+            return (
+                observation,
+                "riksbank",
+                "Daily",
+                False
+            )
+
+        except Exception as exc:
 
             print(
-                f"Riksbank failed "
-                f"for {slug}: "
-                f"{error}"
+                "Sweden Riksbank "
+                "failed:",
+                exc
             )
 
 
-    # --------------------------------------------------------
-    # BANK OF CANADA
-    # --------------------------------------------------------
+    # ---------------------------
+    # CANADA
+    # ---------------------------
 
     if primary == "boc":
 
         try:
 
-            result = fetch_boc(
-                info[
-                    "series_id"
-                ]
-            )
+            observation = fetch_boc()
 
-            if valid_daily_result(
-                result
+            if is_current(
+                observation
             ):
 
                 return (
-                    result,
+                    observation,
                     "boc",
                     "Daily",
                     False
                 )
 
-        except Exception as error:
+        except Exception as exc:
 
             print(
-                "BoC failed:",
-                error
+                "Canada BoC failed:",
+                exc
             )
 
 
-    # --------------------------------------------------------
-    # RBA
-    # --------------------------------------------------------
+    # ---------------------------
+    # AUSTRALIA
+    # ---------------------------
 
     if primary == "rba":
 
         try:
 
-            result = fetch_rba()
+            observation = fetch_rba()
 
-            if valid_daily_result(
-                result
+            if is_current(
+                observation
             ):
 
                 return (
-                    result,
+                    observation,
                     "rba",
                     "Daily",
                     False
                 )
 
-        except Exception as error:
+        except Exception as exc:
 
             print(
-                "RBA failed:",
-                error
+                "Australia RBA failed:",
+                exc
             )
 
 
-    # --------------------------------------------------------
-    # DAILY PUBLIC MARKET FEED
-    # --------------------------------------------------------
+    # ========================================================
+    # FRED FALLBACK
+    # ========================================================
 
-    market = try_market(
-        slug
+    fred_series = config.get(
+        "fred"
     )
 
+    if fred_series:
 
-    if market:
-
-        return (
-            market,
-            "stooq",
-            "Daily",
-            False
-        )
-
-
-    # --------------------------------------------------------
-    # EXISTING FRED/OECD FALLBACK
-    # --------------------------------------------------------
-
-    fallback = (
-
-        info.get(
-            "fallback_series_id"
-        )
-
-        or
-
-        info.get(
-            "series_id"
-        )
-    )
-
-
-    if fallback:
-
-        result = fetch_fred(
-            fallback
+        observation = fetch_fred(
+            fred_series
         )
 
         return (
-            result,
+            observation,
             "fred",
-            (
-                info.get(
-                    "frequency_hint"
-                )
-                or
-                "Monthly"
-            ),
+            "Monthly",
             True
         )
 
 
     raise RuntimeError(
-        "All data sources failed."
+        "No usable source"
     )
-
-
-# ============================================================
-# LAST KNOWN GOOD JSON
-# ============================================================
-
-def load_existing():
-
-    if not os.path.exists(
-        OUTPUT_FILE
-    ):
-
-        return {
-            "countries": {}
-        }
-
-
-    try:
-
-        with open(
-            OUTPUT_FILE,
-            "r",
-            encoding="utf-8"
-        ) as file:
-
-            return json.load(file)
-
-    except Exception as error:
-
-        print(
-            "Existing JSON read failed:",
-            error
-        )
-
-        return {
-            "countries": {}
-        }
 
 
 # ============================================================
@@ -1601,23 +1590,63 @@ def main():
         )
     )
 
-
     countries = {}
 
     errors = {}
 
 
-    for slug, info in SERIES.items():
+    # ========================================================
+    # ONE RIKSBANK REQUEST FOR 8 COUNTRIES
+    # ========================================================
 
-        print(
-            "\n================================"
+    try:
+
+        riksbank_group = (
+            fetch_riksbank_group()
         )
 
         print(
-            "Updating:",
-            info["label"]
+            "Riksbank group 100:",
+            len(
+                riksbank_group
+            ),
+            "matching series"
         )
 
+    except Exception as exc:
+
+        print(
+            "Riksbank group request "
+            "failed:",
+            exc
+        )
+
+        riksbank_group = {}
+
+
+    # ========================================================
+    # COUNTRIES
+    # ========================================================
+
+    for slug, config in COUNTRIES.items():
+
+        label = config["label"]
+
+        old_country = (
+            old_countries.get(
+                slug,
+                {}
+            )
+        )
+
+        print(
+            "\n--------------------------"
+        )
+
+        print(
+            "Updating",
+            label
+        )
 
         try:
 
@@ -1626,29 +1655,19 @@ def main():
                 source,
                 frequency,
                 is_fallback
-            ) = fetch_data(
+            ) = get_country(
+
                 slug,
-                info
+                config,
+                old_country,
+                riksbank_group
             )
 
 
-            stale = staleness_days(
-                observation[
-                    "date"
-                ]
-            )
-
-
-            tier = calc_tier(
-                stale,
-                frequency
-            )
-
-
-            countries[slug] = {
+            country = {
 
                 "label":
-                    info["label"],
+                    label,
 
                 "source":
                     source,
@@ -1657,10 +1676,14 @@ def main():
                     frequency,
 
                 "date":
-                    observation["date"],
+                    observation[
+                        "date"
+                    ],
 
                 "value":
-                    observation["value"],
+                    observation[
+                        "value"
+                    ],
 
                 "previousDate":
                     observation[
@@ -1673,76 +1696,89 @@ def main():
                     ],
 
                 "change":
-                    observation["change"],
+                    observation[
+                        "change"
+                    ],
 
                 "stalenessDays":
-                    stale,
+                    days_old(
+                        observation[
+                            "date"
+                        ]
+                    ),
 
                 "tier":
-                    tier,
+                    tier_for(
+                        observation[
+                            "date"
+                        ],
+                        frequency
+                    ),
 
                 "isFallback":
                     is_fallback
             }
 
 
+            countries[
+                slug
+            ] = country
+
+
             print(
-                info["label"],
+                label,
                 "→",
                 source,
-                "|",
-                observation["date"],
-                "|",
-                observation["value"],
-                "|",
-                tier
+                observation[
+                    "date"
+                ],
+                observation[
+                    "value"
+                ]
             )
 
 
-        except Exception as error:
-
-            errors[slug] = str(
-                error
-            )
-
+        except Exception as exc:
 
             print(
-                "ERROR",
-                info["label"],
-                ":",
-                error
+                label,
+                "FAILED:",
+                exc
+            )
+
+            errors[slug] = str(
+                exc
             )
 
 
-            # -----------------------------------------------
-            # SAFETY:
-            # NEVER DELETE EXISTING WORKING DATA.
-            # -----------------------------------------------
+            # =================================================
+            # ABSOLUTE FAIL-SAFE
+            #
+            # Never remove an existing market
+            # because one external API failed.
+            # =================================================
 
-            old = old_countries.get(
-                slug
-            )
+            if old_country:
 
-
-            if old:
-
-                countries[slug] = old
+                countries[
+                    slug
+                ] = old_country
 
                 print(
-                    "Preserving last "
+                    "Preserved last "
                     "known good value."
                 )
 
 
     # ========================================================
-    # HARD SAFETY CHECK
+    # HARD VALIDATION
     # ========================================================
 
     if not countries:
 
         raise RuntimeError(
-            "No country data available. "
-            "Live JSON will not be replaced."
+            "No market data generated. "
+            "Live JSON was not touched."
         )
 
 
@@ -1754,10 +1790,35 @@ def main():
         if required not in countries:
 
             raise RuntimeError(
-                f"Critical market "
-                f"{required} missing. "
-                "Live JSON will not be replaced."
+                f"Critical market missing: "
+                f"{required}. "
+                "Live JSON was not touched."
             )
+
+
+    # Do not accidentally publish
+    # a drastically truncated file.
+
+    old_count = len(
+        old_countries
+    )
+
+    new_count = len(
+        countries
+    )
+
+    if (
+        old_count
+        and
+        new_count
+        <
+        old_count * 0.90
+    ):
+
+        raise RuntimeError(
+            "Too many countries missing. "
+            "Live JSON was not touched."
+        )
 
 
     result = {
@@ -1787,15 +1848,8 @@ def main():
     # ATOMIC WRITE
     # ========================================================
 
-    temp_file = (
-        OUTPUT_FILE
-        +
-        ".tmp"
-    )
-
-
     with open(
-        temp_file,
+        TEMP_FILE,
         "w",
         encoding="utf-8"
     ) as file:
@@ -1808,9 +1862,11 @@ def main():
         )
 
 
-    # Validate generated JSON before publishing it.
+    # Validate the completed file
+    # before replacing production.
+
     with open(
-        temp_file,
+        TEMP_FILE,
         "r",
         encoding="utf-8"
     ) as file:
@@ -1819,42 +1875,46 @@ def main():
 
 
     os.replace(
-        temp_file,
+        TEMP_FILE,
         OUTPUT_FILE
     )
 
 
     # ========================================================
-    # SUMMARY
+    # REPORT
     # ========================================================
 
-    daily = 0
-    delayed = 0
-    monthly = 0
+    daily = []
+
+    delayed = []
+
+    monthly = []
 
 
-    for country in countries.values():
+    for slug, country in (
+        countries.items()
+    ):
 
         tier = country.get(
             "tier"
         )
 
         if tier == "daily":
-            daily += 1
+            daily.append(slug)
 
         elif tier == "delayed":
-            delayed += 1
+            delayed.append(slug)
 
         else:
-            monthly += 1
+            monthly.append(slug)
 
 
     print(
-        "\n================================"
+        "\n=========================="
     )
 
     print(
-        "BondStats Global Yields updated."
+        "BondStats update complete"
     )
 
     print(
@@ -1864,22 +1924,37 @@ def main():
 
     print(
         "Daily:",
-        daily
+        len(daily)
     )
 
     print(
         "Delayed:",
-        delayed
+        len(delayed)
     )
 
     print(
-        "Monthly fallback:",
-        monthly
+        "Monthly:",
+        len(monthly)
     )
 
     print(
         "Errors:",
         len(errors)
+    )
+
+    print(
+        "\nDaily:",
+        ", ".join(daily)
+    )
+
+    print(
+        "\nDelayed:",
+        ", ".join(delayed)
+    )
+
+    print(
+        "\nStill monthly:",
+        ", ".join(monthly)
     )
 
 
