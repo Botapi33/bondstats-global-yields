@@ -447,5 +447,7 @@
       "isFallback": false
     }
   },
-  "errors": {}
+  "errors": {
+    "canada": "HTTP Error 502: Bad Gateway"
+  }
 }
